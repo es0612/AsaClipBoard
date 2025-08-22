@@ -1,0 +1,58 @@
+name: AsaClipBoard
+options:
+  bundleIdPrefix: com.asaclipboard
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  defaultConfig: Debug
+  
+configs:
+  Debug: debug
+  Release: release
+
+packages:
+  ClipboardSecurity:
+    path: ./ClipboardSecurity
+  ClipboardCore:
+    path: ./ClipboardCore
+  ClipboardUI:
+    path: ./ClipboardUI
+  KeychainSwift:
+    url: https://github.com/evgenyneu/keychain-swift
+    from: "20.0.0"
+
+targets:
+  AsaClipBoard:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources: 
+      - AsaClipBoard
+    dependencies:
+      - package: ClipboardUI
+      - package: ClipboardCore
+      - package: ClipboardSecurity
+    settings:
+      base:
+        INFOPLIST_FILE: AsaClipBoard/Info.plist
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        SWIFT_VERSION: "5.9"
+        LSUIElement: true
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+        Release:
+          SWIFT_COMPILATION_MODE: wholemodule
+          SWIFT_OPTIMIZATION_LEVEL: "-O"
+
+schemes:
+  AsaClipBoard:
+    build:
+      targets:
+        AsaClipBoard: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    archive:
+      config: Release
