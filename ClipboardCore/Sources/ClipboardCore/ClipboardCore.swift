@@ -1,4 +1,10 @@
 import Foundation
+import SwiftData
+
+// モデルクラスを公開
+@_exported import struct Foundation.UUID
+@_exported import struct Foundation.Data
+@_exported import struct Foundation.Date
 
 /// ClipboardCoreパッケージのパブリックインターフェース
 public struct ClipboardCore {

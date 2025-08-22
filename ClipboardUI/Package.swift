@@ -20,8 +20,8 @@ let package = Package(
         .target(
             name: "ClipboardUI",
             dependencies: [
-                "ClipboardCore",
-                "ClipboardSecurity"
+                .product(name: "ClipboardCore", package: "ClipboardCore"),
+                .product(name: "ClipboardSecurity", package: "ClipboardSecurity")
             ]
         ),
         .testTarget(

@@ -18,7 +18,9 @@ let package = Package(
     targets: [
         .target(
             name: "ClipboardCore",
-            dependencies: ["ClipboardSecurity"]
+            dependencies: [
+                .product(name: "ClipboardSecurity", package: "ClipboardSecurity")
+            ]
         ),
         .testTarget(
             name: "ClipboardCoreTests",

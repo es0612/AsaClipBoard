@@ -1,5 +1,10 @@
 import Foundation
 import SwiftUI
+import ClipboardCore
+
+// 公開モジュール
+@_exported import SwiftUI
+@_exported import ClipboardCore
 
 /// ClipboardUIパッケージのパブリックインターフェース
 public struct ClipboardUI {

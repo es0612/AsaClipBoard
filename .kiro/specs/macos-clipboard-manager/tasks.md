@@ -16,17 +16,17 @@ SwiftUIとSPMローカルパッケージを使用したmacOS用クリップボ�
   - 基本的なプロジェクト構造とビルド設定の確立
   - _要件: 1.1, 10.1, 10.3_
 
-- [ ] 1.1 ClipboardSecurityパッケージの作成
+- [x] 1.1 ClipboardSecurityパッケージの作成
   - SPMパッケージの初期化とPackage.swiftの設定
   - KeychainSwift依存関係の追加
   - _要件: 8.3, 8.4_
 
-- [ ] 1.2 ClipboardCoreパッケージの作成
+- [x] 1.2 ClipboardCoreパッケージの作成
   - SPMパッケージの初期化とClipboardSecurityへの依存設定
   - SwiftDataモデルの基盤構築
   - _要件: 1.1, 1.2, 1.3_
 
-- [ ] 1.3 ClipboardUIパッケージの作成
+- [x] 1.3 ClipboardUIパッケージの作成
   - SPMパッケージの初期化と依存関係設定
   - SwiftUIビューの基盤構築
   - _要件: 2.1, 2.2, 3.1_
