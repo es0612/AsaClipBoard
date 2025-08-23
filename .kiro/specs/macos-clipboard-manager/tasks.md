@@ -41,7 +41,7 @@ SwiftUIとSPMローカルパッケージを使用したmacOS用クリップボ�
   - Keychain管理と暗号化機能の構築
   - _要件: 8.1, 8.2, 8.3, 8.4_
 
-- [ ] 2.1 KeychainManagerの実装
+- [x] 2.1 KeychainManagerの実装
   - SwiftTestingを使用したテストファーストでKeychainManager実装
   - 基本的なCRUD操作（作成、読み取り、更新、削除）の実装
   - _要件: 8.3_
