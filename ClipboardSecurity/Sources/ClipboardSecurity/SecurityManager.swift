@@ -1,7 +1,9 @@
 import Foundation
 import RegexBuilder
+import Observation
 
 /// セキュリティ関連の機能を管理するクラス
+@Observable
 public class SecurityManager {
     private var _isPrivateModeEnabled: Bool = false
     
