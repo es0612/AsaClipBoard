@@ -61,7 +61,7 @@ SwiftUIとSPMローカルパッケージを使用したmacOS用クリップボ�
   - CloudKit同期機能の基盤構築
   - _要件: 1.1, 1.2, 1.3, 6.1, 6.2, 6.3_
 
-- [ ] 3.1 SwiftDataモデルの実装
+- [x] 3.1 SwiftDataモデルの実装
   - ClipboardItemModelのテスト駆動実装
   - SmartActionModelとCategoryModelの実装
   - _要件: 1.1, 4.1, 4.3_
