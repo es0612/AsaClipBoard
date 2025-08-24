@@ -1,10 +1,16 @@
 import Foundation
 import SwiftData
+import CloudKit
 
 // Foundation型を公開
 @_exported import struct Foundation.UUID
 @_exported import struct Foundation.Data
 @_exported import struct Foundation.Date
+
+// CloudKit関連型を公開
+@_exported import class CloudKit.CKRecord
+@_exported import class CloudKit.CKContainer
+@_exported import enum CloudKit.CKAccountStatus
 
 /// ClipboardCoreパッケージのパブリックインターフェース
 public struct ClipboardCore {
