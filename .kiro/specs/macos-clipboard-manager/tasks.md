@@ -71,7 +71,7 @@ SwiftUIとSPMローカルパッケージを使用したmacOS用クリップボ�
   - モックPasteboardを使用した単体テスト実装
   - _要件: 1.1, 1.2, 1.4_
 
-- [ ] 3.3 SmartContentRecognizerの実装
+- [x] 3.3 SmartContentRecognizerの実装
   - RegexBuilderを使用したコンテンツ認識機能の実装
   - URL、メール、電話番号、カラーコード検出のテスト駆動実装
   - _要件: 5.1, 5.2, 5.3, 5.4, 5.5_
