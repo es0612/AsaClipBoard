@@ -1,83 +1,89 @@
 # Technology Stack - AsaClipBoard
 
 ## Architecture
-AsaClipBoard follows a native Apple platform architecture designed for optimal performance and platform integration:
+AsaClipBoard follows a native macOS architecture designed for optimal performance and platform integration:
 
-- **Native iOS/macOS Development**: Built specifically for Apple platforms using UIKit (iOS) and AppKit (macOS)
-- **Shared Business Logic**: Common core functionality shared between iOS and macOS targets
-- **Platform-Specific UI**: Tailored user interfaces that respect each platform's design patterns
-- **Local-First Data**: Primary data storage on device with optional cloud sync capabilities
+- **Native macOS Development**: Built specifically for macOS using SwiftUI and MenuBarExtra
+- **Modular SPM Packages**: Business logic organized into Swift Package Manager packages
+- **MVVM + Service Layer**: Clean architecture with separation of concerns
+- **Local-First Data**: Primary data storage on device with security-first approach
 
-## Platform Technologies
+## Primary Technologies
+- **Language**: Swift 5.9+
+- **Platform**: macOS 14.0+
+- **UI Framework**: SwiftUI with MenuBarExtra integration
+- **Architecture**: MVVM + Service Layer with SPM packages
+- **Project Generation**: XcodeGen with YAML configuration
 
-### iOS Development
-- **Language**: Swift 5.x
-- **Minimum iOS Version**: iOS 15.0+
-- **UI Framework**: UIKit with programmatic layouts
-- **Background Processing**: Background App Refresh for clipboard monitoring
-- **iCloud Integration**: CloudKit for optional cross-device synchronization
+## Package Architecture
+The project uses Swift Package Manager (SPM) with a modular package structure:
 
-### macOS Development  
-- **Language**: Swift 5.x
-- **Minimum macOS Version**: macOS 12.0+
-- **UI Framework**: AppKit with Auto Layout
-- **System Integration**: NSPasteboard monitoring and system menu integration
-- **Background Services**: Launch agents for persistent clipboard monitoring
+### ClipboardSecurity Package
+- **Purpose**: Security and privacy features
+- **Dependencies**: KeychainSwift (external)
+- **Components**:
+  - SecurityManager: Sensitive content detection
+  - KeychainManager: Secure data storage
+  - EncryptionManager: Data encryption/decryption with CryptoKit
 
-### Shared Components
-- **Core Data**: Local storage and data persistence
-- **CloudKit**: Cross-platform synchronization (optional)
-- **Combine**: Reactive programming for UI updates and data flow
-- **Foundation**: Core functionality and system APIs
+### ClipboardCore Package  
+- **Purpose**: Business logic and data management
+- **Dependencies**: ClipboardSecurity
+- **Components**: Core clipboard functionality and data models
+
+### ClipboardUI Package
+- **Purpose**: User interface components
+- **Dependencies**: ClipboardCore, ClipboardSecurity
+- **Components**: SwiftUI views and reusable UI components
 
 ## Development Environment
 
 ### Required Tools
 - **Xcode**: 14.0+ (latest stable recommended)
-- **Swift**: 5.7+ (bundled with Xcode)
-- **iOS Simulator**: For iOS development and testing
-- **macOS**: Development machine must run macOS for Xcode compatibility
+- **XcodeGen**: Project file generation from YAML configuration
+- **Swift Package Manager**: Primary dependency management
+- **Testing**: SwiftTesting framework for modern test-driven development
 
-### Package Management
-- **Swift Package Manager (SPM)**: Primary dependency management
-- **CocoaPods**: Legacy support if needed for specific dependencies
-- **Carthage**: Alternative binary framework management
-
-### Testing Framework
-- **XCTest**: Unit and UI testing framework
-- **XCUITest**: Integration and end-to-end testing
-- **Quick/Nimble**: BDD-style testing (if adopted)
+## External Dependencies
+- **KeychainSwift**: Secure keychain access for sensitive data storage
 
 ## Common Development Commands
 
-### Building and Running
+### Project Generation and Building
 ```bash
+# Generate Xcode project from YAML configuration
+xcodegen generate
+
 # Open project in Xcode
 open AsaClipBoard.xcodeproj
 
-# Build for iOS
-xcodebuild -project AsaClipBoard.xcodeproj -scheme AsaClipBoard-iOS -destination 'platform=iOS Simulator,name=iPhone 14'
-
-# Build for macOS  
-xcodebuild -project AsaClipBoard.xcodeproj -scheme AsaClipBoard-macOS
+# Build for macOS
+xcodebuild -project AsaClipBoard.xcodeproj -scheme AsaClipBoard
 ```
 
 ### Testing
 ```bash
-# Run iOS tests
-xcodebuild test -project AsaClipBoard.xcodeproj -scheme AsaClipBoard-iOS -destination 'platform=iOS Simulator,name=iPhone 14'
-
 # Run macOS tests
-xcodebuild test -project AsaClipBoard.xcodeproj -scheme AsaClipBoard-macOS
+xcodebuild test -project AsaClipBoard.xcodeproj -scheme AsaClipBoard
+
+# Test individual packages
+# In ClipboardSecurity/
+swift test
+
+# In ClipboardCore/
+swift test
+
+# In ClipboardUI/
+swift test
 ```
 
 ### Package Management
 ```bash
-# Resolve Swift Package Manager dependencies
+# Resolve dependencies for main project
 xcodebuild -resolvePackageDependencies
 
-# Update Swift packages
-# (Done through Xcode: File > Add Package Dependencies)
+# Resolve dependencies for individual packages
+swift package resolve
 ```
 
 ## Environment Configuration
@@ -85,43 +91,26 @@ xcodebuild -resolvePackageDependencies
 ### Build Configurations
 - **Debug**: Development builds with debugging symbols and verbose logging
 - **Release**: Production builds with optimizations and minimal logging
-- **Testing**: Specialized configuration for automated testing
 
-### Target Platforms
-- **iOS**: iPhone and iPad support with adaptive UI
-- **macOS**: Desktop application with menu bar integration
-- **Shared Framework**: Common business logic and data models
+### Target Platform
+- **macOS**: Desktop application with MenuBarExtra integration (macOS 14.0+)
+- **LSUIElement**: Application runs as background utility without dock icon
 
 ### Key Configuration Variables
 - `CLIPBOARD_HISTORY_LIMIT`: Maximum number of clipboard items to store
-- `SYNC_ENABLED`: Enable/disable CloudKit synchronization
 - `DEBUG_LOGGING`: Control logging verbosity for development
 - `BACKGROUND_MONITORING`: Enable background clipboard monitoring
 
 ## Platform Integration
 
-### iOS-Specific Technologies
-- **App Extensions**: Share Extension for capturing content from other apps
-- **Shortcuts Integration**: Siri Shortcuts for voice-activated clipboard access
-- **Widget Extensions**: Home/Lock screen widgets for quick clipboard access
-- **Universal Clipboard**: Integration with iOS Universal Clipboard feature
-
 ### macOS-Specific Technologies
-- **Menu Bar Integration**: System menu bar icon and quick access menu
+- **MenuBarExtra**: SwiftUI-based menu bar integration for modern macOS development
+- **NSPasteboard**: Native clipboard monitoring and management
 - **Global Hotkeys**: System-wide keyboard shortcuts for clipboard access
-- **Dock Integration**: Dock menu integration for power user workflows
-- **System Services**: Integration with macOS Services menu
+- **Background Operation**: LSUIElement configuration for background-only operation
 
-## Security and Privacy
-
-### Data Protection
-- **App Sandbox**: Strict sandboxing for both iOS and macOS
+## Security Features
+- **CryptoKit**: Built-in encryption using AES-GCM
 - **Keychain Services**: Secure storage for sensitive configuration
-- **Data Encryption**: Core Data encryption for local storage
-- **Network Security**: TLS encryption for any network communication
-
-### Privacy Features
 - **Local-First Storage**: Default local storage without cloud dependency
-- **User-Controlled Sync**: Optional iCloud sync with explicit user consent
-- **Sensitive Content Detection**: Automatic detection and handling of passwords/keys
-- **Data Expiration**: Configurable automatic cleanup of old clipboard items
+- **Sensitive Content Detection**: Automatic detection of passwords, API keys, credit cards

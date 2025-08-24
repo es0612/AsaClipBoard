@@ -1,11 +1,11 @@
 # Product Overview - AsaClipBoard
 
 ## Product Description
-AsaClipBoard is a clipboard management utility for iOS and macOS that enhances the standard clipboard functionality by providing extended clipboard history, management features, and improved productivity workflows.
+AsaClipBoard is a clipboard management utility for macOS that enhances the standard clipboard functionality by providing extended clipboard history, management features, and improved productivity workflows.
 
 ## Core Features
 - **Clipboard History**: Store and access multiple clipboard entries beyond the standard single-item clipboard
-- **Cross-Platform Sync**: Seamless clipboard synchronization between iOS and macOS devices
+- **Menu Bar Integration**: Native macOS menu bar access for quick clipboard management
 - **Smart Organization**: Automatic categorization and organization of clipboard content
 - **Quick Access**: Fast retrieval and pasting of frequently used clipboard items
 - **Rich Content Support**: Handle text, images, links, and other clipboard content types
@@ -17,13 +17,13 @@ AsaClipBoard targets power users, developers, content creators, and professional
 - **Developer Workflows**: Managing code snippets, API keys, and commands across development sessions
 - **Content Creation**: Organizing text fragments, links, and media for writing and design work
 - **Research Activities**: Collecting and organizing information from multiple sources
-- **Cross-Device Productivity**: Seamless workflow continuation between iPhone, iPad, and Mac
+- **System Integration**: Deep macOS integration with native menu bar and keyboard shortcuts
 
 ## Key Value Proposition
 - **Enhanced Productivity**: Eliminates the friction of re-copying lost clipboard items
-- **Native Integration**: Built specifically for Apple's ecosystem with platform-native UI/UX
+- **Native Integration**: Built specifically for macOS with SwiftUI and MenuBarExtra integration
 - **Privacy-Focused**: User controls their data with local-first storage approach
-- **Seamless Experience**: Intuitive interface that feels natural within iOS and macOS workflows
+- **Seamless Experience**: Intuitive interface that feels natural within macOS workflows
 - **Reliability**: Robust clipboard monitoring and storage without interfering with system performance
 
 ## Development Philosophy
