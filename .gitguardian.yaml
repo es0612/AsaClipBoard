@@ -1,0 +1,113 @@
+# GitGuardian Configuration for AsaClipBoard
+# This file configures GitGuardian to reduce false positives from test code
+
+# Paths to exclude from scanning
+paths-ignore:
+  - "**/Tests/**"                    # All test directories
+  - "**/ClipboardSecurityTests/**"   # Specific security test directory
+  - "**/*Tests.swift"                # All Swift test files
+  - "**/*Test.swift"                 # Alternative test file naming
+  - "**/Mock*"                       # Mock data files
+  - "**/Fixtures/**"                 # Test fixtures
+  - "**/.kiro/**"                    # Kiro specification files
+
+# Specific patterns to ignore in test files
+secrets-ignore:
+  - name: "Test Passwords"
+    match: "TEST_.*PASSWORD.*"
+    ignore: true
+    comment: "Test passwords with TEST_ prefix are safe test data"
+    
+  - name: "Mock API Keys"
+    match: "MOCK_.*API.*KEY.*"
+    ignore: true
+    comment: "Mock API keys for testing purposes only"
+    
+  - name: "Fake Credentials"
+    match: "FAKE_.*"
+    ignore: true
+    comment: "Explicitly fake credentials for unit tests"
+    
+  - name: "Dummy Test Data"
+    match: "dummy_.*_NOT_REAL"
+    ignore: true
+    comment: "Dummy test data with explicit NOT_REAL suffix"
+
+  - name: "Test Token Patterns"
+    match: ".*_FOR_(TESTING|TEST|UNIT_TEST).*"
+    ignore: true
+    comment: "Tokens explicitly marked for testing"
+
+# Detection sensitivity
+# Set to "medium" to reduce false positives while maintaining security
+sensitivity: "medium"
+
+# Enable detailed reporting for legitimate secrets
+show-secrets: false
+
+# Minimum entropy for secret detection
+# Slightly higher threshold to reduce test data false positives
+minimum-occurrence-threshold: 2
+
+# File size limits
+maximum-documents-scanned: 1000
+maximum-document-size: "10MB"
+
+# Custom rules for test environments
+custom-rules:
+  - name: "Allow test credit cards"
+    pattern: "4111-1111-1111-1111"
+    ignore: true
+    comment: "Standard test credit card number used in unit tests"
+    
+  - name: "Allow test SSN patterns"
+    pattern: "123-45-6789"
+    ignore: true
+    comment: "Standard test SSN pattern"
+
+# Scan configuration
+scan:
+  # Exclude binary files
+  exclude-binary-files: true
+  
+  # Exclude large files that are unlikely to contain secrets
+  exclude-large-files: true
+  
+  # Focus on code files
+  include-extensions:
+    - ".swift"
+    - ".md" 
+    - ".yaml"
+    - ".yml"
+    - ".json"
+    - ".plist"
+    - ".xcconfig"
+
+# Notification settings
+notifications:
+  # Reduce noise from test files
+  ignore-test-files: true
+  
+  # Only alert on high-confidence detections
+  minimum-severity: "medium"
+
+# Team collaboration
+team:
+  # Allow team members to mark false positives
+  allow-false-positive-feedback: true
+  
+  # Require review for ignored secrets
+  require-review-for-ignored-secrets: false
+
+# Comments that indicate test/mock data
+comment-patterns:
+  - "test"
+  - "testing"
+  - "mock"
+  - "fake"
+  - "dummy"
+  - "sample"
+  - "example"
+  - "テスト"
+  - "モック"
+  - "ダミー"

@@ -11,17 +11,17 @@ struct SecurityManagerTests {
         let sut = SecurityManager()
         
         // When & Then
-        #expect(sut.detectSensitiveContent("password: secret123") == true)
-        #expect(sut.detectSensitiveContent("パスワード: abc123") == true)
-        #expect(sut.detectSensitiveContent("pwd=mypassword") == true)
+        #expect(sut.detectSensitiveContent("password: TEST_PASSWORD_NOT_REAL_123") == true)
+        #expect(sut.detectSensitiveContent("パスワード: TEST_PASSWORD_ABC_123") == true)
+        #expect(sut.detectSensitiveContent("pwd=MOCK_TEST_PASSWORD") == true)
         #expect(sut.detectSensitiveContent("Hello World") == false)
         
         // 大文字小文字の混在
-        #expect(sut.detectSensitiveContent("PASSWORD: Secret123") == true)
-        #expect(sut.detectSensitiveContent("Pwd=MyPassword") == true)
+        #expect(sut.detectSensitiveContent("PASSWORD: TEST_PASSWORD_SECRET_123") == true)
+        #expect(sut.detectSensitiveContent("Pwd=MOCK_TEST_PASSWORD") == true)
         
         // 全角コロンのテスト
-        #expect(sut.detectSensitiveContent("パスワード：secret123") == true)
+        #expect(sut.detectSensitiveContent("パスワード：TEST_PASSWORD_SECRET_123") == true)
     }
     
     @Test("機密データ検出 - クレジットカード番号")
@@ -81,7 +81,7 @@ struct SecurityManagerTests {
         let passwordOnlyManager = SecurityManager(enabledPatterns: [.password])
         
         // When & Then
-        #expect(passwordOnlyManager.detectSensitiveContent("password: secret123") == true)
+        #expect(passwordOnlyManager.detectSensitiveContent("password: MOCK_PASSWORD_FOR_TESTING_123") == true)
         #expect(passwordOnlyManager.detectSensitiveContent("4111-1111-1111-1111") == false) // クレジットカードは検出しない
         #expect(passwordOnlyManager.detectSensitiveContent("API_KEY=test123") == false) // APIキーも検出しない
         
@@ -89,7 +89,7 @@ struct SecurityManagerTests {
         let cardApiManager = SecurityManager(enabledPatterns: [.creditCard, .apiKey])
         
         // When & Then
-        #expect(cardApiManager.detectSensitiveContent("password: secret123") == false) // パスワードは検出しない
+        #expect(cardApiManager.detectSensitiveContent("password: MOCK_PASSWORD_FOR_TESTING_123") == false) // パスワードは検出しない
         #expect(cardApiManager.detectSensitiveContent("4111-1111-1111-1111") == true)
         #expect(cardApiManager.detectSensitiveContent("API_KEY=test123") == true)
     }
@@ -100,7 +100,7 @@ struct SecurityManagerTests {
         let sut = SecurityManager()
         
         // When & Then - 単一タイプ
-        let passwordTypes = sut.detectSensitiveTypes("password: secret123")
+        let passwordTypes = sut.detectSensitiveTypes("password: MOCK_TEST_PASSWORD_123")
         #expect(passwordTypes.count == 1)
         #expect(passwordTypes.contains(.password))
         
@@ -109,7 +109,7 @@ struct SecurityManagerTests {
         #expect(creditCardTypes.contains(.creditCard))
         
         // 複数タイプの混在
-        let mixedText = "password: secret123 and card: 4111-1111-1111-1111"
+        let mixedText = "password: MOCK_MULTI_TEST_PASSWORD_123 and card: 4111-1111-1111-1111"
         let mixedTypes = sut.detectSensitiveTypes(mixedText)
         #expect(mixedTypes.count == 2)
         #expect(mixedTypes.contains(.password))
@@ -151,7 +151,7 @@ struct SecurityManagerTests {
         // When & Then - 複数の機密データが含まれるテキスト
         let complexText = """
         User credentials:
-        password: mySecret123
+        password: MOCK_COMPLEX_TEST_PASSWORD_123
         Credit card: 4111-1111-1111-1111
         API token: dummy_test_key_for_api_access_12345
         """
@@ -227,7 +227,7 @@ struct SecurityManagerTests {
         // When & Then - セキュリティ関連のコンテキスト分析
         let securityReport = """
         Security audit findings:
-        - Found password: admin123
+        - Found password: MOCK_ADMIN_TEST_PASSWORD_123
         - Credit card detected: 5555-5555-5555-4444
         - API key exposure: dummy_api_key_123456789012345
         """
@@ -257,7 +257,7 @@ struct SecurityManagerTests {
         #expect(duration < 0.1, "大きなテキストの検出も高速であるべき")
         
         // 機密データありのケース
-        let sensitiveText = largeText + "password: secret123"
+        let sensitiveText = largeText + "password: MOCK_PERFORMANCE_TEST_PASSWORD_123"
         let startTime2 = Date()
         let result2 = sut.detectSensitiveContent(sensitiveText)
         let duration2 = Date().timeIntervalSince(startTime2)

@@ -17,11 +17,11 @@ struct SecurityIntegrationTests {
         let keychainManager = KeychainManager(keyPrefix: "TestSecurityIntegration")
         let testKey = "sensitive_data_\(UUID().uuidString)"
         
-        // 機密データパターンをテスト
+        // 機密データパターンをテスト (明示的にテスト用データとして設計)
         let sensitiveTexts = [
-            "password: mySecretPassword123",
-            "パスワード：機密データ",
-            "API_KEY=dummy_1234567890abcdef1234567890",
+            "password: TEST_PASSWORD_NOT_REAL_123",
+            "パスワード：TEST_FAKE_PASSWORD_FOR_UNIT_TEST",
+            "API_KEY=MOCK_API_KEY_1234567890abcdef1234567890_NOT_REAL",
             "4111-1111-1111-1111"
         ]
         
@@ -59,7 +59,7 @@ struct SecurityIntegrationTests {
         )
         
         let encryptionManager = try EncryptionManager(config: config)
-        let testData = "機密なクリップボードデータ - パスワード: secret123".data(using: .utf8)!
+        let testData = "機密なクリップボードデータ - パスワード: TEST_FAKE_PASSWORD_123".data(using: .utf8)!
         
         // When - データを暗号化
         let encryptedData = try await encryptionManager.encrypt(testData)
@@ -94,11 +94,11 @@ struct SecurityIntegrationTests {
         )
         let encryptionManager = try EncryptionManager(config: config)
         
-        // テストデータ - 様々な種類のクリップボードコンテンツ
+        // テストデータ - 様々な種類のクリップボードコンテンツ (明示的なテスト用データ)
         let testContents = [
             "通常のテキスト",
-            "password: mySecret123",
-            "APIキー: dummy_abcdef1234567890123456",
+            "password: MOCK_PASSWORD_NOT_REAL_123",
+            "APIキー: TEST_API_KEY_abcdef1234567890123456_FAKE",
             "メールアドレス: user@example.com",
             "クレジットカード: 4111-1111-1111-1111"
         ]
@@ -185,9 +185,9 @@ struct SecurityIntegrationTests {
         
         let testContents = [
             "通常のテキスト1",
-            "password: secret1",
+            "password: TEST_BATCH_PASSWORD_NOT_REAL_1",
             "通常のテキスト2", 
-            "API_KEY=dummy_batch_test_12345678901234567890",
+            "API_KEY=MOCK_BATCH_API_KEY_12345678901234567890_FAKE",
             "通常のテキスト3"
         ]
         
@@ -307,7 +307,7 @@ struct SecurityIntegrationTests {
         #expect(decryptedData == largeTestData, "大きなデータが正しく復元される")
         
         // When & Then - 機密データ検出のパフォーマンス
-        let longTextWithSensitiveData = String(repeating: "通常のテキスト。", count: 500) + "password: secret123"
+        let longTextWithSensitiveData = String(repeating: "通常のテキスト。", count: 500) + "password: TEST_PERFORMANCE_PASSWORD_NOT_REAL_123"
         
         let detectionStartTime = DispatchTime.now()
         let isSensitive = securityManager.detectSensitiveContent(longTextWithSensitiveData)
