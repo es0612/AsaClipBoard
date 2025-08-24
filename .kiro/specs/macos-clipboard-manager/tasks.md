@@ -66,7 +66,7 @@ SwiftUIとSPMローカルパッケージを使用したmacOS用クリップボ�
   - SmartActionModelとCategoryModelの実装
   - _要件: 1.1, 4.1, 4.3_
 
-- [ ] 3.2 ClipboardMonitorServiceの実装
+- [x] 3.2 ClipboardMonitorServiceの実装
   - NSPasteboardモニタリング機能のテスト駆動実装
   - モックPasteboardを使用した単体テスト実装
   - _要件: 1.1, 1.2, 1.4_
