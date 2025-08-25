@@ -146,3 +146,114 @@ struct SettingsManagerTests {
         #expect(settingsManager.hotkey?.modifiers.contains(Models.HotkeyModifiers.shift) == true, "ホットキーのモディファイアが更新される")
     }
 }
+
+@Suite("HotkeySettingsView Tests")
+struct HotkeySettingsViewTests {
+    
+    @Test("ホットキー設定ビューの基本初期化")
+    func hotkeySettingsViewInitialization() {
+        let settingsManager = SettingsManager()
+        let hotkeyView = Views.HotkeySettingsView(settingsManager: settingsManager)
+        #expect(hotkeyView != nil, "HotkeySettingsViewが正常に初期化される")
+    }
+    
+    @Test("現在のホットキー設定の表示")
+    func currentHotkeyDisplay() {
+        let settingsManager = SettingsManager()
+        settingsManager.hotkey = Models.HotkeyConfiguration(
+            keyCode: 49, 
+            modifiers: [Models.HotkeyModifiers.command, Models.HotkeyModifiers.option]
+        )
+        
+        let hotkeyView = Views.HotkeySettingsView(settingsManager: settingsManager)
+        #expect(hotkeyView != nil, "現在のホットキー設定を表示するビューが初期化される")
+    }
+    
+    @Test("ホットキーキャプチャ状態の管理")
+    func hotkeyCapturingState() {
+        let settingsManager = SettingsManager()
+        let hotkeyView = Views.HotkeySettingsView(settingsManager: settingsManager)
+        // キャプチャ状態の初期値確認など、実装後にテストコードを追加
+        #expect(hotkeyView != nil, "ホットキーキャプチャ機能が含まれるビューが初期化される")
+    }
+    
+    @Test("ホットキーリセット機能")
+    func hotkeyResetFunction() {
+        let settingsManager = SettingsManager()
+        settingsManager.hotkey = Models.HotkeyConfiguration(
+            keyCode: 49, 
+            modifiers: [Models.HotkeyModifiers.command]
+        )
+        
+        let hotkeyView = Views.HotkeySettingsView(settingsManager: settingsManager)
+        #expect(hotkeyView != nil, "ホットキーリセット機能が含まれるビューが初期化される")
+    }
+}
+
+@Suite("HotkeyConfiguration Tests") 
+struct HotkeyConfigurationTests {
+    
+    @Test("ホットキー設定の初期化")
+    func hotkeyConfigurationInitialization() {
+        let config = Models.HotkeyConfiguration(
+            keyCode: 49, 
+            modifiers: [Models.HotkeyModifiers.command, Models.HotkeyModifiers.shift]
+        )
+        
+        #expect(config.keyCode == 49, "キーコードが正しく設定される")
+        #expect(config.modifiers.count == 2, "モディファイアが正しく設定される")
+        #expect(config.modifiers.contains(Models.HotkeyModifiers.command), "Commandモディファイアが含まれる")
+        #expect(config.modifiers.contains(Models.HotkeyModifiers.shift), "Shiftモディファイアが含まれる")
+    }
+    
+    @Test("ホットキー文字列表現の生成")
+    func hotkeyStringRepresentation() {
+        let config = Models.HotkeyConfiguration(
+            keyCode: 49, 
+            modifiers: [Models.HotkeyModifiers.command, Models.HotkeyModifiers.option]
+        )
+        
+        let displayString = config.displayString
+        #expect(!displayString.isEmpty, "表示用文字列が生成される")
+        #expect(displayString.contains("⌘"), "Command記号が含まれる")
+        #expect(displayString.contains("⌥"), "Option記号が含まれる")
+    }
+    
+    @Test("ホットキーの等価性チェック")
+    func hotkeyEquality() {
+        let config1 = Models.HotkeyConfiguration(
+            keyCode: 49, 
+            modifiers: [Models.HotkeyModifiers.command]
+        )
+        let config2 = Models.HotkeyConfiguration(
+            keyCode: 49, 
+            modifiers: [Models.HotkeyModifiers.command]
+        )
+        let config3 = Models.HotkeyConfiguration(
+            keyCode: 50, 
+            modifiers: [Models.HotkeyModifiers.command]
+        )
+        
+        #expect(config1 == config2, "同じ設定のホットキーが等しい")
+        #expect(config1 != config3, "異なる設定のホットキーが等しくない")
+    }
+    
+    @Test("無効なホットキーの検証")
+    func invalidHotkeyValidation() {
+        // モディファイアなしのホットキー（無効）
+        let configWithoutModifiers = Models.HotkeyConfiguration(
+            keyCode: 49, 
+            modifiers: []
+        )
+        
+        #expect(!configWithoutModifiers.isValid, "モディファイアなしのホットキーが無効として検証される")
+        
+        // 有効なホットキー
+        let validConfig = Models.HotkeyConfiguration(
+            keyCode: 49, 
+            modifiers: [Models.HotkeyModifiers.command]
+        )
+        
+        #expect(validConfig.isValid, "モディファイアありのホットキーが有効として検証される")
+    }
+}

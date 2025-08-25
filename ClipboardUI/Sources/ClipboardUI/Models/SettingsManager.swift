@@ -118,13 +118,66 @@ extension Models {
 }
 
 // MARK: - Supporting Types
-public struct HotkeyConfiguration {
+public struct HotkeyConfiguration: Equatable {
     public let keyCode: UInt32
     public let modifiers: HotkeyModifiers
     
     public init(keyCode: UInt32, modifiers: HotkeyModifiers) {
         self.keyCode = keyCode
         self.modifiers = modifiers
+    }
+    
+    /// ホットキーが有効かどうかを確認（モディファイアが必須）
+    public var isValid: Bool {
+        return !modifiers.isEmpty
+    }
+    
+    /// 表示用の文字列表現を生成
+    public var displayString: String {
+        var components: [String] = []
+        
+        if modifiers.contains(.control) {
+            components.append("⌃")
+        }
+        if modifiers.contains(.option) {
+            components.append("⌥")
+        }
+        if modifiers.contains(.shift) {
+            components.append("⇧")
+        }
+        if modifiers.contains(.command) {
+            components.append("⌘")
+        }
+        
+        // キーコードを表示可能な文字に変換
+        if let keyName = keyCodeToDisplayName(keyCode) {
+            components.append(keyName)
+        }
+        
+        return components.joined()
+    }
+    
+    /// キーコードを表示名に変換
+    private func keyCodeToDisplayName(_ keyCode: UInt32) -> String? {
+        switch keyCode {
+        case 49: return "Space"
+        case 36: return "Return"
+        case 48: return "Tab"
+        case 51: return "Delete"
+        case 53: return "Escape"
+        case 0...25: // A-Z keys
+            let unicodeValue = keyCode + 97 // 'a' = 97
+            return String(UnicodeScalar(unicodeValue) ?? UnicodeScalar(97)!)
+        case 18...29: // 1-0 keys  
+            let number = (keyCode == 29) ? 0 : keyCode - 17
+            return String(number)
+        default:
+            return "Key \(keyCode)"
+        }
+    }
+    
+    public static func == (lhs: HotkeyConfiguration, rhs: HotkeyConfiguration) -> Bool {
+        return lhs.keyCode == rhs.keyCode && lhs.modifiers == rhs.modifiers
     }
 }
 
@@ -139,6 +192,16 @@ public struct HotkeyModifiers: OptionSet {
     public static let shift = HotkeyModifiers(rawValue: 1 << 1)
     public static let option = HotkeyModifiers(rawValue: 1 << 2)
     public static let control = HotkeyModifiers(rawValue: 1 << 3)
+    
+    /// アクティブなモディファイアの数を取得
+    public var count: Int {
+        var count = 0
+        if contains(.command) { count += 1 }
+        if contains(.shift) { count += 1 }
+        if contains(.option) { count += 1 }
+        if contains(.control) { count += 1 }
+        return count
+    }
 }
 
 public enum AppearanceMode: String, CaseIterable, Hashable {

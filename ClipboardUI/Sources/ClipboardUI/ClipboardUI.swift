@@ -9,6 +9,7 @@ import ClipboardCore
 // 公開コンポーネント
 public typealias SettingsView = Views.SettingsView
 public typealias SettingsManager = Models.SettingsManager
+public typealias HotkeySettingsView = Views.HotkeySettingsView
 
 /// ClipboardUIパッケージのパブリックインターフェース
 public enum ClipboardUI {
@@ -21,6 +22,7 @@ public enum ClipboardUI {
     
     public typealias SettingsView = Views.SettingsView
     public typealias SettingsManager = Models.SettingsManager
+    public typealias HotkeySettingsView = Views.HotkeySettingsView
 }
 
 // MARK: - Namespace

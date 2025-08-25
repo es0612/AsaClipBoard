@@ -43,7 +43,7 @@ extension Views {
                 
                 VStack(alignment: .leading, spacing: 16) {
                     // ホットキー設定
-                    HotkeySettingsView(hotkey: $settingsManager.hotkey)
+                    Views.HotkeySettingsView(settingsManager: settingsManager)
                     
                     Divider()
                     
@@ -109,90 +109,6 @@ extension Views {
 }
 
 // MARK: - Settings Components
-struct HotkeySettingsView: View {
-    @Binding var hotkey: Models.HotkeyConfiguration?
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("グローバルホットキー", systemImage: "keyboard")
-                .font(.headline)
-            
-            HStack {
-                Text("現在の設定:")
-                    .foregroundColor(.secondary)
-                
-                if let hotkey = hotkey {
-                    HotkeyDisplayView(hotkey: hotkey)
-                } else {
-                    Text("未設定")
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button("変更...") {
-                    // TODO: ホットキー設定ダイアログを表示
-                }
-                .buttonStyle(.bordered)
-            }
-            
-            Text("クリップボード履歴を表示するためのキーボードショートカット")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
-    }
-}
-
-struct HotkeyDisplayView: View {
-    let hotkey: Models.HotkeyConfiguration
-    
-    var body: some View {
-        HStack(spacing: 2) {
-            if hotkey.modifiers.contains(.command) {
-                KeyCapView("⌘")
-            }
-            if hotkey.modifiers.contains(.shift) {
-                KeyCapView("⇧")
-            }
-            if hotkey.modifiers.contains(.option) {
-                KeyCapView("⌥")
-            }
-            if hotkey.modifiers.contains(.control) {
-                KeyCapView("⌃")
-            }
-            KeyCapView(keyCodeToString(hotkey.keyCode))
-        }
-    }
-    
-    private func keyCodeToString(_ keyCode: UInt32) -> String {
-        switch keyCode {
-        case 9: return "V"
-        case 49: return "Space"
-        default: return "Key"
-        }
-    }
-}
-
-struct KeyCapView: View {
-    let text: String
-    
-    init(_ text: String) {
-        self.text = text
-    }
-    
-    var body: some View {
-        Text(text)
-            .font(.system(size: 12, weight: .medium, design: .monospaced))
-            .padding(.horizontal, 6)
-            .padding(.vertical, 2)
-            .background(Color(NSColor.controlBackgroundColor))
-            .cornerRadius(4)
-            .overlay(
-                RoundedRectangle(cornerRadius: 4)
-                    .stroke(Color(NSColor.separatorColor), lineWidth: 1)
-            )
-    }
-}
 
 struct HistoryLimitSettingsView: View {
     @Binding var historyLimit: Int
