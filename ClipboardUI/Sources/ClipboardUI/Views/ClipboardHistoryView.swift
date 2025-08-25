@@ -63,14 +63,15 @@ public struct ClipboardHistoryView: View {
                             ClipboardItemContextMenu(item: item)
                         }
                         .swipeActions(edge: .trailing) {
-                            Button("削除", systemImage: "trash", role: .destructive) {
-                                deleteItem(item)
-                            }
-                            
-                            Button("お気に入り", systemImage: item.isFavorite ? "star.fill" : "star") {
-                                toggleFavorite(item)
-                            }
-                            .tint(.yellow)
+                            SwipeActionsView(
+                                item: item,
+                                showDeleteAction: true,
+                                showFavoriteAction: true,
+                                showCategoryAction: true,
+                                onDelete: { deleteItem(item) },
+                                onFavoriteToggle: { toggleFavorite(item) },
+                                onCategorySet: { _ in }
+                            )
                         }
                 }
                 .listStyle(.plain)
@@ -117,111 +118,4 @@ public struct ClipboardHistoryView: View {
 
 // MARK: - Supporting Views
 
-struct SearchBar: View {
-    @Binding var text: String
-    
-    var body: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.secondary)
-            
-            TextField("履歴を検索", text: $text)
-                .textFieldStyle(.plain)
-            
-            if !text.isEmpty {
-                Button("クリア") {
-                    text = ""
-                }
-                .foregroundColor(.secondary)
-            }
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .background(Color(.controlBackgroundColor))
-        .cornerRadius(6)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-    }
-}
 
-struct FilterBar: View {
-    @Binding var selectedFilter: ContentFilter
-    
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(ContentFilter.allCases, id: \.self) { filter in
-                    Button(action: {
-                        selectedFilter = filter
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: filter.systemImage)
-                                .font(.caption)
-                            Text(filter.rawValue)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(selectedFilter == filter ? Color.accentColor : Color(.controlBackgroundColor))
-                        .foregroundColor(selectedFilter == filter ? .white : .primary)
-                        .cornerRadius(4)
-                    }
-                    .buttonStyle(.borderless)
-                }
-            }
-            .padding(.horizontal, 12)
-        }
-        .padding(.vertical, 4)
-    }
-}
-
-struct ClipboardItemContextMenu: View {
-    let item: ClipboardItemModel
-    @Environment(\.modelContext) private var modelContext
-    
-    var body: some View {
-        Button("コピー", systemImage: "doc.on.doc") {
-            // Copy functionality handled by main view
-        }
-        
-        Button("お気に入りに追加", systemImage: item.isFavorite ? "star.fill" : "star") {
-            item.isFavorite.toggle()
-            try? modelContext.save()
-        }
-        
-        Divider()
-        
-        Button("削除", systemImage: "trash", role: .destructive) {
-            modelContext.delete(item)
-            try? modelContext.save()
-        }
-    }
-}
-
-public enum ContentFilter: String, CaseIterable {
-    case all = "すべて"
-    case text = "テキスト"
-    case image = "画像"
-    case url = "URL"
-    case code = "コード"
-    
-    var contentType: ClipboardContentType? {
-        switch self {
-        case .all: return nil
-        case .text: return .text
-        case .image: return .image
-        case .url: return .url
-        case .code: return .code
-        }
-    }
-    
-    var systemImage: String {
-        switch self {
-        case .all: return "square.grid.2x2"
-        case .text: return "doc.text"
-        case .image: return "photo"
-        case .url: return "link"
-        case .code: return "chevron.left.forwardslash.chevron.right"
-        }
-    }
-}
