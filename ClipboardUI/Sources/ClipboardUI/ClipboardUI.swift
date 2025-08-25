@@ -6,12 +6,24 @@ import ClipboardCore
 @_exported import SwiftUI
 @_exported import ClipboardCore
 
+// 公開コンポーネント
+public typealias SettingsView = Views.SettingsView
+public typealias SettingsManager = Models.SettingsManager
+
 /// ClipboardUIパッケージのパブリックインターフェース
-public struct ClipboardUI {
+public enum ClipboardUI {
     public static let version = "1.0.0"
     
     /// パッケージの初期化
     public static func initialize() {
         // パッケージの初期化処理があれば記述
     }
+    
+    public typealias SettingsView = Views.SettingsView
+    public typealias SettingsManager = Models.SettingsManager
 }
+
+// MARK: - Namespace
+public enum Views {}
+public enum Models {}
+public enum Components {}
