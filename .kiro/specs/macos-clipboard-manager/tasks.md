@@ -106,7 +106,7 @@ SwiftUIとSPMローカルパッケージを使用したmacOS用クリップボ�
   - ContentTypeIconとSmartActionsViewの実装
   - _要件: 2.1, 2.2, 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 5.2 ClipboardHistoryViewの実装
+- [x] 5.2 ClipboardHistoryViewの実装
   - メインの履歴表示ビューのテスト駆動実装
   - SwiftDataのQueryを使用したリアルタイム更新機能
   - _要件: 2.1, 2.2, 2.3, 2.4_
