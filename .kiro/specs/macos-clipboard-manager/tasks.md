@@ -101,7 +101,7 @@ SwiftUIとSPMローカルパッケージを使用したmacOS用クリップボ�
   - Observationマクロを活用した状態管理の実装
   - _要件: 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 5.1 基本UIコンポーネントの実装
+- [x] 5.1 基本UIコンポーネントの実装
   - ClipboardItemRowコンポーネントのテスト駆動実装
   - ContentTypeIconとSmartActionsViewの実装
   - _要件: 2.1, 2.2, 5.1, 5.2, 5.3, 5.4_

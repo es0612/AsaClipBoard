@@ -34,6 +34,8 @@ public struct ClipboardItemRow: View {
             }
             
             Spacer()
+            
+            SmartActionsView(item: item)
         }
         .padding(.vertical, 4)
     }

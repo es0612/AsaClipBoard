@@ -32,7 +32,9 @@ struct ClipboardItemRowTests {
         let item = ClipboardItemModel(
             contentData: testData,
             contentType: .text,
+            timestamp: Date(),
             isFavorite: true,
+            category: nil,
             preview: "Favorite content"
         )
         
