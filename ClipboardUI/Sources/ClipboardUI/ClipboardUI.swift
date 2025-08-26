@@ -14,6 +14,7 @@ public typealias AppearanceSettingsView = Views.AppearanceSettingsView
 public typealias AppearanceManager = Models.AppearanceManager
 public typealias CustomColor = Models.CustomColor
 
+
 /// ClipboardUIパッケージのパブリックインターフェース
 public enum ClipboardUI {
     public static let version = "1.0.0"
@@ -29,7 +30,7 @@ public enum ClipboardUI {
     public typealias AppearanceSettingsView = Views.AppearanceSettingsView
     public typealias AppearanceManager = Models.AppearanceManager
     public typealias CustomColor = Models.CustomColor
-}
+    }
 
 // MARK: - Namespace
 public enum Views {}
