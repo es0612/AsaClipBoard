@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 import CloudKit
+import Carbon
 
 // Foundation型を公開
 @_exported import struct Foundation.UUID
