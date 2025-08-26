@@ -110,8 +110,10 @@ struct SettingsManagerTests {
         // 履歴制限のデフォルト値
         #expect(settingsManager.historyLimit == 100, "デフォルト履歴制限が100である")
         
-        // 外観のデフォルト値
-        #expect(settingsManager.appearance == Models.AppearanceMode.system, "デフォルト外観がシステムである")
+        // 外観のデフォルト値（実際の初期値を確認）
+        // デバッグ: 実際の値を確認
+        let actualAppearance = settingsManager.appearance
+        #expect(actualAppearance == Models.AppearanceMode.system, "デフォルト外観がシステムである（実際の値: \(actualAppearance.rawValue)）")
         
         // 自動起動のデフォルト値
         #expect(settingsManager.autoStart == false, "デフォルトで自動起動が無効である")
@@ -137,13 +139,13 @@ struct SettingsManagerTests {
         
         let settingsManager = SettingsManager()
         
-        // 設定を変更
+        // 設定を変更（didSetで自動的にsave()が呼ばれる）
         settingsManager.historyLimit = 500
         settingsManager.appearance = Models.AppearanceMode.dark
         settingsManager.autoStart = true
         
-        // 設定が保存される
-        settingsManager.save()
+        // 少し待ってからUserDefaultsの変更が確実に反映されるようにする
+        Thread.sleep(forTimeInterval: 0.1)
         
         // 新しいインスタンスで設定を読み込み
         let newSettingsManager = SettingsManager()

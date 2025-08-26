@@ -11,50 +11,67 @@ extension Models {
 
 @Observable
 public class ClipboardUISettingsManager {
-        // MARK: - General Settings
-        @ObservationIgnored
-        public var hotkey: ClipboardUIHotkeyConfiguration? {
+    // MARK: - General Settings
+    @ObservationIgnored
+    public var hotkey: ClipboardUIHotkeyConfiguration? {
         didSet {
-            save()
+            if !isLoading {
+                save()
+            }
         }
     }
     
     public var historyLimit: Int = 100 {
         didSet {
-            save()
+            if !isLoading {
+                save()
+            }
         }
     }
     
     public var appearance: ClipboardUIAppearanceMode = .system {
         didSet {
-            save()
+            if !isLoading {
+                save()
+            }
         }
     }
     
     public var autoStart: Bool = false {
         didSet {
-            save()
+            if !isLoading {
+                save()
+            }
         }
     }
     
     public var contentTypes: Set<ClipboardUIContentType> = [.text, .image, .url] {
         didSet {
-            save()
+            if !isLoading {
+                save()
+            }
         }
     }
     
     // MARK: - Security Settings
     public var privateMode: Bool = false {
         didSet {
-            save()
+            if !isLoading {
+                save()
+            }
         }
     }
     
     public var autoLockMinutes: Int = 0 {
         didSet {
-            save()
+            if !isLoading {
+                save()
+            }
         }
     }
+    
+    // 初期化時のsave()呼び出しを防ぐフラグ
+    private var isLoading = false
     
     // MARK: - UserDefaults Keys
     private enum Keys {
@@ -73,6 +90,9 @@ public class ClipboardUISettingsManager {
     }
     
     private func loadSettings() {
+        isLoading = true
+        defer { isLoading = false }
+        
         let defaults = UserDefaults.standard
         
         // Hotkey configuration
@@ -86,12 +106,36 @@ public class ClipboardUISettingsManager {
             self.hotkey = ClipboardUIHotkeyConfiguration(keyCode: 9, modifiers: [.command, .shift])
         }
         
-        // Other settings
-        self.historyLimit = defaults.object(forKey: Keys.historyLimit) as? Int ?? 100
-        self.appearance = ClipboardUIAppearanceMode(rawValue: defaults.string(forKey: Keys.appearance) ?? "system") ?? .system
-        self.autoStart = defaults.bool(forKey: Keys.autoStart)
-        self.privateMode = defaults.bool(forKey: Keys.privateMode)
-        self.autoLockMinutes = defaults.integer(forKey: Keys.autoLockMinutes)
+        // Other settings with proper nil checks
+        if let historyLimitObj = defaults.object(forKey: Keys.historyLimit) as? Int {
+            self.historyLimit = historyLimitObj
+        } else {
+            self.historyLimit = 100
+        }
+        
+        if let appearanceString = defaults.object(forKey: Keys.appearance) as? String {
+            self.appearance = ClipboardUIAppearanceMode(rawValue: appearanceString) ?? .system
+        } else {
+            self.appearance = .system
+        }
+        
+        if defaults.object(forKey: Keys.autoStart) != nil {
+            self.autoStart = defaults.bool(forKey: Keys.autoStart)
+        } else {
+            self.autoStart = false
+        }
+        
+        if defaults.object(forKey: Keys.privateMode) != nil {
+            self.privateMode = defaults.bool(forKey: Keys.privateMode)
+        } else {
+            self.privateMode = false
+        }
+        
+        if defaults.object(forKey: Keys.autoLockMinutes) != nil {
+            self.autoLockMinutes = defaults.integer(forKey: Keys.autoLockMinutes)  
+        } else {
+            self.autoLockMinutes = 0
+        }
         
         // Content types
         if let contentTypesData = defaults.data(forKey: Keys.contentTypes),
