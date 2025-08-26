@@ -14,13 +14,19 @@ extension Views {
                         Text("一般")
                     }
                 
+                Views.AppearanceSettingsView(settingsManager: settingsManager)
+                    .tabItem {
+                        Image(systemName: "paintbrush")
+                        Text("外観")
+                    }
+                
                 SecuritySettingsView(settingsManager: settingsManager)
                     .tabItem {
                         Image(systemName: "lock")
                         Text("セキュリティ")
                     }
             }
-            .frame(width: 450, height: 350)
+            .frame(width: 500, height: 450)
         }
     }
     
@@ -53,7 +59,9 @@ extension Views {
                     Divider()
                     
                     // 外観設定
-                    AppearanceSettingsView(appearance: $settingsManager.appearance)
+                    Text("外観設定")
+                        .font(.headline)
+                    Text("外観設定は専用タブで利用可能です")
                     
                     Divider()
                     
@@ -148,28 +156,6 @@ struct HistoryLimitSettingsView: View {
     }
 }
 
-struct AppearanceSettingsView: View {
-    @Binding var appearance: Models.AppearanceMode
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("外観", systemImage: "paintbrush")
-                .font(.headline)
-            
-            Picker("外観モード", selection: $appearance) {
-                ForEach(Models.AppearanceMode.allCases, id: \.self) { mode in
-                    Text(mode.displayName)
-                        .tag(mode)
-                }
-            }
-            .pickerStyle(.segmented)
-            
-            Text("アプリの外観テーマを設定")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
-    }
-}
 
 struct AutoStartSettingsView: View {
     @Binding var autoStart: Bool

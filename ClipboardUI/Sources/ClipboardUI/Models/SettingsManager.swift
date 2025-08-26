@@ -2,11 +2,18 @@ import Foundation
 import Observation
 
 extension Models {
-    @Observable
-    public class SettingsManager {
-    // MARK: - General Settings
-    @ObservationIgnored
-    public var hotkey: HotkeyConfiguration? {
+    public typealias SettingsManager = ClipboardUISettingsManager
+    public typealias HotkeyConfiguration = ClipboardUIHotkeyConfiguration  
+    public typealias HotkeyModifiers = ClipboardUIHotkeyModifiers
+    public typealias AppearanceMode = ClipboardUIAppearanceMode
+    public typealias ContentType = ClipboardUIContentType
+}
+
+@Observable
+public class ClipboardUISettingsManager {
+        // MARK: - General Settings
+        @ObservationIgnored
+        public var hotkey: ClipboardUIHotkeyConfiguration? {
         didSet {
             save()
         }
@@ -18,7 +25,7 @@ extension Models {
         }
     }
     
-    public var appearance: AppearanceMode = .system {
+    public var appearance: ClipboardUIAppearanceMode = .system {
         didSet {
             save()
         }
@@ -30,7 +37,7 @@ extension Models {
         }
     }
     
-    public var contentTypes: Set<ContentType> = [.text, .image, .url] {
+    public var contentTypes: Set<ClipboardUIContentType> = [.text, .image, .url] {
         didSet {
             save()
         }
@@ -72,16 +79,16 @@ extension Models {
         if defaults.object(forKey: Keys.hotkeyKeyCode) != nil {
             let keyCode = UInt32(defaults.integer(forKey: Keys.hotkeyKeyCode))
             let modifiersRawValue = defaults.integer(forKey: Keys.hotkeyModifiers)
-            let modifiers = HotkeyModifiers(rawValue: modifiersRawValue)
-            self.hotkey = HotkeyConfiguration(keyCode: keyCode, modifiers: modifiers)
+            let modifiers = ClipboardUIHotkeyModifiers(rawValue: modifiersRawValue)
+            self.hotkey = ClipboardUIHotkeyConfiguration(keyCode: keyCode, modifiers: modifiers)
         } else {
             // Default hotkey: Cmd+Shift+V
-            self.hotkey = HotkeyConfiguration(keyCode: 9, modifiers: [.command, .shift])
+            self.hotkey = ClipboardUIHotkeyConfiguration(keyCode: 9, modifiers: [.command, .shift])
         }
         
         // Other settings
         self.historyLimit = defaults.object(forKey: Keys.historyLimit) as? Int ?? 100
-        self.appearance = AppearanceMode(rawValue: defaults.string(forKey: Keys.appearance) ?? "system") ?? .system
+        self.appearance = ClipboardUIAppearanceMode(rawValue: defaults.string(forKey: Keys.appearance) ?? "system") ?? .system
         self.autoStart = defaults.bool(forKey: Keys.autoStart)
         self.privateMode = defaults.bool(forKey: Keys.privateMode)
         self.autoLockMinutes = defaults.integer(forKey: Keys.autoLockMinutes)
@@ -89,7 +96,7 @@ extension Models {
         // Content types
         if let contentTypesData = defaults.data(forKey: Keys.contentTypes),
            let contentTypesArray = try? JSONDecoder().decode([String].self, from: contentTypesData) {
-            self.contentTypes = Set(contentTypesArray.compactMap(ContentType.init))
+            self.contentTypes = Set(contentTypesArray.compactMap(ClipboardUIContentType.init))
         }
     }
     
@@ -114,15 +121,18 @@ extension Models {
         if let contentTypesData = try? JSONEncoder().encode(contentTypesArray) {
             defaults.set(contentTypesData, forKey: Keys.contentTypes)
         }
+        
+        // Synchronize to ensure immediate persistence (important for tests)
+        defaults.synchronize()
     }
 }
 
 // MARK: - Supporting Types
-public struct HotkeyConfiguration: Equatable {
+public struct ClipboardUIHotkeyConfiguration: Equatable {
     public let keyCode: UInt32
-    public let modifiers: HotkeyModifiers
+    public let modifiers: ClipboardUIHotkeyModifiers
     
-    public init(keyCode: UInt32, modifiers: HotkeyModifiers) {
+    public init(keyCode: UInt32, modifiers: ClipboardUIHotkeyModifiers) {
         self.keyCode = keyCode
         self.modifiers = modifiers
     }
@@ -176,22 +186,22 @@ public struct HotkeyConfiguration: Equatable {
         }
     }
     
-    public static func == (lhs: HotkeyConfiguration, rhs: HotkeyConfiguration) -> Bool {
+    public static func == (lhs: ClipboardUIHotkeyConfiguration, rhs: ClipboardUIHotkeyConfiguration) -> Bool {
         return lhs.keyCode == rhs.keyCode && lhs.modifiers == rhs.modifiers
     }
 }
 
-public struct HotkeyModifiers: OptionSet {
+public struct ClipboardUIHotkeyModifiers: OptionSet {
     public let rawValue: Int
     
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
     
-    public static let command = HotkeyModifiers(rawValue: 1 << 0)
-    public static let shift = HotkeyModifiers(rawValue: 1 << 1)
-    public static let option = HotkeyModifiers(rawValue: 1 << 2)
-    public static let control = HotkeyModifiers(rawValue: 1 << 3)
+    public static let command = ClipboardUIHotkeyModifiers(rawValue: 1 << 0)
+    public static let shift = ClipboardUIHotkeyModifiers(rawValue: 1 << 1)
+    public static let option = ClipboardUIHotkeyModifiers(rawValue: 1 << 2)
+    public static let control = ClipboardUIHotkeyModifiers(rawValue: 1 << 3)
     
     /// アクティブなモディファイアの数を取得
     public var count: Int {
@@ -204,7 +214,7 @@ public struct HotkeyModifiers: OptionSet {
     }
 }
 
-public enum AppearanceMode: String, CaseIterable, Hashable {
+public enum ClipboardUIAppearanceMode: String, CaseIterable, Hashable {
     case light = "light"
     case dark = "dark"
     case system = "system"
@@ -221,7 +231,7 @@ public enum AppearanceMode: String, CaseIterable, Hashable {
     }
 }
 
-public enum ContentType: String, CaseIterable, Hashable {
+public enum ClipboardUIContentType: String, CaseIterable, Hashable {
     case text = "text"
     case image = "image"
     case url = "url"
@@ -252,5 +262,4 @@ public enum ContentType: String, CaseIterable, Hashable {
             return "doc"
         }
     }
-}
 }

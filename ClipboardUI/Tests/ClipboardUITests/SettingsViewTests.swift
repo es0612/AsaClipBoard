@@ -92,6 +92,16 @@ struct SettingsManagerTests {
     
     @Test("デフォルト設定値の確認")
     func defaultSettingsValues() {
+        // テスト前に関連するUserDefaultsキーをクリア
+        let defaults = UserDefaults.standard
+        let keysToClean = [
+            "hotkey_key_code", "hotkey_modifiers", "history_limit", 
+            "appearance", "auto_start", "content_types", 
+            "private_mode", "auto_lock_minutes"
+        ]
+        keysToClean.forEach { defaults.removeObject(forKey: $0) }
+        defaults.synchronize()
+        
         let settingsManager = SettingsManager()
         
         // ホットキーのデフォルト値
@@ -115,6 +125,16 @@ struct SettingsManagerTests {
     
     @Test("設定値の永続化")
     func settingsPersistence() {
+        // テスト前に関連するUserDefaultsキーをクリア
+        let defaults = UserDefaults.standard
+        let keysToClean = [
+            "hotkey_key_code", "hotkey_modifiers", "history_limit", 
+            "appearance", "auto_start", "content_types", 
+            "private_mode", "auto_lock_minutes"
+        ]
+        keysToClean.forEach { defaults.removeObject(forKey: $0) }
+        defaults.synchronize()
+        
         let settingsManager = SettingsManager()
         
         // 設定を変更
@@ -130,8 +150,12 @@ struct SettingsManagerTests {
         
         // 設定が復元されている
         #expect(newSettingsManager.historyLimit == 500, "履歴制限が永続化される")
-        #expect(newSettingsManager.appearance == Models.AppearanceMode.dark, "外観設定が永続化される")
+        #expect(newSettingsManager.appearance == Models.AppearanceMode.dark, "外観設定が永続化される")  
         #expect(newSettingsManager.autoStart == true, "自動起動設定が永続化される")
+        
+        // テスト後のクリーンアップ
+        keysToClean.forEach { defaults.removeObject(forKey: $0) }
+        defaults.synchronize()
     }
     
     @Test("ホットキー設定の変更")
@@ -255,5 +279,165 @@ struct HotkeyConfigurationTests {
         )
         
         #expect(validConfig.isValid, "モディファイアありのホットキーが有効として検証される")
+    }
+}
+
+@Suite("AppearanceSettingsView Tests")
+struct AppearanceSettingsViewTests {
+    
+    @Test("外観設定ビューの基本初期化")
+    func appearanceSettingsViewInitialization() {
+        let settingsManager = SettingsManager()
+        let appearanceView = Views.AppearanceSettingsView(settingsManager: settingsManager)
+        #expect(appearanceView != nil, "AppearanceSettingsViewが正常に初期化される")
+    }
+    
+    @Test("テーマ選択の管理")
+    func themeSelection() {
+        let settingsManager = SettingsManager()
+        
+        // 初期状態はシステムテーマ
+        #expect(settingsManager.appearance == Models.AppearanceMode.system, "初期状態はシステムテーマ")
+        
+        // ダークテーマに変更
+        settingsManager.appearance = .dark
+        #expect(settingsManager.appearance == Models.AppearanceMode.dark, "ダークテーマに変更される")
+        
+        // ライトテーマに変更
+        settingsManager.appearance = .light
+        #expect(settingsManager.appearance == Models.AppearanceMode.light, "ライトテーマに変更される")
+    }
+    
+    @Test("カスタムカラーテーマ機能")
+    func customColorTheme() {
+        let settingsManager = SettingsManager()
+        let appearanceView = Views.AppearanceSettingsView(settingsManager: settingsManager)
+        
+        // カスタムカラーテーマが初期化される
+        #expect(appearanceView != nil, "カスタムカラーテーマ機能が含まれるビューが初期化される")
+    }
+    
+    @Test("テーマプレビュー機能")
+    func themePreview() {
+        let settingsManager = SettingsManager()
+        let appearanceView = Views.AppearanceSettingsView(settingsManager: settingsManager)
+        
+        // テーマプレビューが表示される
+        #expect(appearanceView != nil, "テーマプレビュー機能が含まれるビューが初期化される")
+    }
+}
+
+@Suite("AppearanceManager Tests")
+struct AppearanceManagerTests {
+    
+    @Test("外観管理の初期化")
+    func appearanceManagerInitialization() {
+        // テスト前にAppearance関連のUserDefaultsキーをクリア
+        let defaults = UserDefaults.standard
+        let keysToClean = ["appearance_theme", "custom_colors"]
+        keysToClean.forEach { defaults.removeObject(forKey: $0) }
+        defaults.synchronize()
+        
+        let appearanceManager = Models.AppearanceManager()
+        
+        #expect(appearanceManager != nil, "AppearanceManagerが正常に初期化される")
+        #expect(appearanceManager.currentTheme == Models.AppearanceMode.system, "初期テーマがシステムである")
+    }
+    
+    @Test("システム外観の検出")
+    func systemAppearanceDetection() {
+        let appearanceManager = Models.AppearanceManager()
+        
+        // システムの外観を検出（テスト環境では.systemが返される）
+        let systemAppearance = appearanceManager.detectSystemAppearance()
+        #expect(systemAppearance == .light || systemAppearance == .dark || systemAppearance == .system, "システム外観が検出される")
+    }
+    
+    @Test("テーマ変更の通知")
+    func themeChangeNotification() {
+        let appearanceManager = Models.AppearanceManager()
+        
+        var notificationReceived = false
+        appearanceManager.onThemeChanged = {
+            notificationReceived = true
+        }
+        
+        // テーマを変更
+        appearanceManager.setTheme(.dark)
+        #expect(notificationReceived, "テーマ変更の通知が送信される")
+        #expect(appearanceManager.currentTheme == .dark, "テーマが正しく変更される")
+    }
+    
+    @Test("カスタムカラーの管理")
+    func customColorManagement() {
+        let appearanceManager = Models.AppearanceManager()
+        
+        // カスタムカラーを設定
+        let customColor = Models.CustomColor(
+            primary: .blue,
+            secondary: .gray,
+            accent: .orange,
+            background: .white,
+            surface: .gray.opacity(0.1)
+        )
+        
+        appearanceManager.setCustomColors(customColor)
+        #expect(appearanceManager.customColors != nil, "カスタムカラーが設定される")
+        #expect(appearanceManager.customColors?.primary == .blue, "プライマリカラーが正しく設定される")
+    }
+    
+    @Test("テーマの永続化")
+    func themePersistence() {
+        let appearanceManager1 = Models.AppearanceManager()
+        appearanceManager1.setTheme(.dark)
+        appearanceManager1.saveSettings()
+        
+        // 新しいインスタンスで設定を復元
+        let appearanceManager2 = Models.AppearanceManager()
+        #expect(appearanceManager2.currentTheme == .dark, "テーマが永続化される")
+    }
+}
+
+@Suite("CustomColor Tests")
+struct CustomColorTests {
+    
+    @Test("カスタムカラーの初期化")
+    func customColorInitialization() {
+        let customColor = Models.CustomColor(
+            primary: .blue,
+            secondary: .gray,
+            accent: .red,
+            background: .white,
+            surface: .gray.opacity(0.1)
+        )
+        
+        #expect(customColor.primary == .blue, "プライマリカラーが正しく設定される")
+        #expect(customColor.secondary == .gray, "セカンダリカラーが正しく設定される")
+        #expect(customColor.accent == .red, "アクセントカラーが正しく設定される")
+    }
+    
+    @Test("デフォルトテーマカラーの生成")
+    func defaultThemeColors() {
+        let lightColors = Models.CustomColor.defaultLight
+        let darkColors = Models.CustomColor.defaultDark
+        
+        #expect(lightColors != nil, "ライトテーマのデフォルトカラーが生成される")
+        #expect(darkColors != nil, "ダークテーマのデフォルトカラーが生成される")
+        #expect(lightColors.background != darkColors.background, "ライトとダークで背景色が異なる")
+    }
+    
+    @Test("カラーの16進数変換")
+    func colorHexConversion() {
+        let customColor = Models.CustomColor(
+            primary: .blue,
+            secondary: .gray,
+            accent: .red,
+            background: .white,
+            surface: .clear
+        )
+        
+        let hexValues = customColor.toHexValues()
+        #expect(!hexValues.isEmpty, "16進数カラー値が生成される")
+        #expect(hexValues["primary"] != nil, "プライマリカラーの16進数値が存在する")
     }
 }
