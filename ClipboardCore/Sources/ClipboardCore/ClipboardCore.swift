@@ -13,6 +13,8 @@ import Carbon
 @_exported import class CloudKit.CKContainer
 @_exported import enum CloudKit.CKAccountStatus
 
+// Services are exported automatically through the module
+
 /// ClipboardCoreパッケージのパブリックインターフェース
 public struct ClipboardCore {
     public static let version = "1.0.0"

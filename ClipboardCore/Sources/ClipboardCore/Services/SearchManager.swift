@@ -10,6 +10,15 @@ public class SearchManager {
     private var searchIndex: [String: Set<UUID>] = [:]
     private let tokenizer = NLTokenizer(unit: .word)
     
+    // キャッシュ機能の追加
+    private var searchCache: [String: (results: [ClipboardItemModel], timestamp: Date)] = [:]
+    private let cacheTimeout: TimeInterval = 30 // 30秒間のキャッシュ
+    private let maxCacheSize = 50 // 最大50クエリをキャッシュ
+    
+    // パフォーマンス監視
+    private var indexLastUpdated = Date()
+    private let indexUpdateThreshold: TimeInterval = 60 // 60秒ごとにインデックス更新チェック
+    
     public init(modelContext: ModelContext) {
         self.modelContext = modelContext
         tokenizer.setLanguage(.english) // デフォルト言語を設定
@@ -23,6 +32,14 @@ public class SearchManager {
         if query.isEmpty {
             return await fetchRecentItems()
         }
+        
+        // キャッシュチェック
+        if let cachedResult = getCachedResult(for: query) {
+            return cachedResult
+        }
+        
+        // インデックスの更新が必要かチェック
+        await checkAndUpdateIndexIfNeeded()
         
         // 複数の検索戦略を並列実行
         async let exactMatches = searchExact(query: query)
@@ -45,7 +62,12 @@ public class SearchManager {
             }
         }
         
-        return Array(allResults.prefix(50)) // 最大50件に制限
+        let finalResults = Array(allResults.prefix(50)) // 最大50件に制限
+        
+        // 結果をキャッシュに保存
+        cacheResult(for: query, results: finalResults)
+        
+        return finalResults
     }
     
     /// 正規表現パターンによる検索
@@ -244,5 +266,63 @@ public class SearchManager {
         guard !union.isEmpty else { return 0.0 }
         
         return Double(intersection.count) / Double(union.count)
+    }
+    
+    // MARK: - キャッシュ管理
+    
+    /// キャッシュから結果を取得
+    private func getCachedResult(for query: String) -> [ClipboardItemModel]? {
+        guard let cached = searchCache[query] else { return nil }
+        
+        // キャッシュの有効期限をチェック
+        if Date().timeIntervalSince(cached.timestamp) > cacheTimeout {
+            searchCache.removeValue(forKey: query)
+            return nil
+        }
+        
+        return cached.results
+    }
+    
+    /// 結果をキャッシュに保存
+    private func cacheResult(for query: String, results: [ClipboardItemModel]) {
+        // キャッシュサイズ制限チェック
+        if searchCache.count >= maxCacheSize {
+            // 最も古いエントリを削除
+            if let oldestKey = searchCache.min(by: { $0.value.timestamp < $1.value.timestamp })?.key {
+                searchCache.removeValue(forKey: oldestKey)
+            }
+        }
+        
+        searchCache[query] = (results: results, timestamp: Date())
+    }
+    
+    /// キャッシュをクリア
+    public func clearCache() {
+        searchCache.removeAll()
+    }
+    
+    // MARK: - インデックス管理の改善
+    
+    /// インデックスの更新が必要かチェックして、必要に応じて更新
+    private func checkAndUpdateIndexIfNeeded() async {
+        let now = Date()
+        if now.timeIntervalSince(indexLastUpdated) > indexUpdateThreshold {
+            await buildSearchIndex()
+            indexLastUpdated = now
+        }
+    }
+    
+    /// インデックスを強制更新（テスト用）
+    public func refreshSearchIndex() async {
+        await buildSearchIndex()
+        indexLastUpdated = Date()
+        clearCache() // インデックス更新時はキャッシュもクリア
+    }
+    
+    /// インデックス統計情報を取得（デバッグ用）
+    public func getIndexStatistics() -> (totalWords: Int, totalEntries: Int) {
+        let totalWords = searchIndex.count
+        let totalEntries = searchIndex.values.reduce(0) { $0 + $1.count }
+        return (totalWords: totalWords, totalEntries: totalEntries)
     }
 }
