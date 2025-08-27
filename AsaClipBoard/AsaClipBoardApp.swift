@@ -13,6 +13,7 @@ struct AsaClipBoardApp: App {
     let settingsManager: SettingsManager  
     let securityManager: SecurityManager
     let menuBarExtraManager: MenuBarExtraManager
+    let notificationManager: NotificationManager
     
     init() {
         // マネージャークラスの初期化
@@ -20,6 +21,7 @@ struct AsaClipBoardApp: App {
         self.settingsManager = SettingsManager()
         self.clipboardManager = ClipboardManager()
         self.menuBarExtraManager = MenuBarExtraManager()
+        self.notificationManager = NotificationManager()
         
         // パッケージの初期化
         ClipboardSecurity.initialize()
@@ -31,6 +33,9 @@ struct AsaClipBoardApp: App {
         
         // 初期データをMenuBarExtraManagerに設定
         clipboardManager.updateMenuBarExtra(with: menuBarExtraManager)
+        
+        // ClipboardManagerに通知マネージャーを設定
+        clipboardManager.setNotificationManager(notificationManager)
     }
     
     var body: some Scene {
@@ -40,6 +45,7 @@ struct AsaClipBoardApp: App {
                 .environment(settingsManager)
                 .environment(securityManager)
                 .environment(menuBarExtraManager)
+                .environment(notificationManager)
         }
         .menuBarExtraStyle(.window)
         .modelContainer(for: [ClipboardItemModel.self])
@@ -48,6 +54,7 @@ struct AsaClipBoardApp: App {
             SettingsView()
                 .environment(settingsManager)
                 .environment(securityManager)
+                .environment(notificationManager)
         }
     }
     
@@ -76,10 +83,16 @@ class ClipboardManager {
     static let shared = ClipboardManager()
     
     var recentItems: [ClipboardItemModel] = []
+    private var notificationManager: NotificationManager?
     
     init() {
         // 基本初期化処理
         loadRecentItems()
+    }
+    
+    /// 通知マネージャーを設定
+    func setNotificationManager(_ manager: NotificationManager) {
+        self.notificationManager = manager
     }
     
     /// クリップボードにアイテムをコピー
@@ -102,6 +115,11 @@ class ClipboardManager {
         }
         
         print("Copied to clipboard: \(item.preview)")
+        
+        // クリップボード更新通知を送信
+        if let notificationManager = notificationManager {
+            await notificationManager.sendClipboardUpdateNotification(preview: item.preview)
+        }
     }
     
     /// 最近のアイテムを読み込み

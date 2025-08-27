@@ -13,6 +13,7 @@ public typealias HotkeySettingsView = Views.HotkeySettingsView
 public typealias AppearanceSettingsView = Views.AppearanceSettingsView
 public typealias AppearanceManager = Models.AppearanceManager
 public typealias CustomColor = Models.CustomColor
+public typealias NotificationManager = Controllers.NotificationManager
 
 
 /// ClipboardUIパッケージのパブリックインターフェース
@@ -30,9 +31,11 @@ public enum ClipboardUI {
     public typealias AppearanceSettingsView = Views.AppearanceSettingsView
     public typealias AppearanceManager = Models.AppearanceManager
     public typealias CustomColor = Models.CustomColor
+    public typealias NotificationManager = Controllers.NotificationManager
     }
 
 // MARK: - Namespace
 public enum Views {}
 public enum Models {}
 public enum Components {}
+public enum Controllers {}
