@@ -64,15 +64,40 @@ ClipboardSecurity/
 
 ```
 ClipboardCore/
-├── Package.swift                   # Package configuration with ClipboardSecurity dependency
+├── Package.swift                           # Package configuration with ClipboardSecurity dependency
+├── Package.resolved                        # Resolved dependencies
 ├── Sources/ClipboardCore/
 │   ├── Models/
-│   │   ├── ClipboardItemModel.swift    # Core data structures
-│   │   └── ClipboardContentType.swift  # Content type definitions
-│   └── ClipboardCore.swift         # Package entry point
+│   │   ├── ClipboardItemModel.swift        # Core data structures for clipboard items
+│   │   ├── ClipboardContentType.swift      # Content type definitions and enums
+│   │   ├── CategoryModel.swift             # Category organization model
+│   │   ├── SmartAction.swift               # Smart action definitions
+│   │   └── SmartActionModel.swift          # Smart action data model
+│   ├── Services/
+│   │   ├── ClipboardHistoryManager.swift   # Main clipboard data management
+│   │   ├── ClipboardMonitorService.swift   # NSPasteboard monitoring service
+│   │   ├── SearchManager.swift             # Advanced search and indexing
+│   │   ├── SmartContentRecognizer.swift    # Content pattern recognition
+│   │   ├── CloudKitSyncManager.swift       # CloudKit synchronization
+│   │   ├── HotkeyManager.swift             # Global hotkey management
+│   │   ├── ClipboardError.swift            # Error definitions and types
+│   │   ├── ErrorLogger.swift               # Comprehensive error logging
+│   │   └── ErrorRecovery.swift             # Error recovery mechanisms
+│   └── ClipboardCore.swift                 # Package entry point
 └── Tests/ClipboardCoreTests/
     ├── ClipboardItemModelTests.swift
     ├── ClipboardContentTypeTests.swift
+    ├── CategoryModelTests.swift
+    ├── SmartActionModelTests.swift
+    ├── ClipboardHistoryManagerTests.swift
+    ├── ClipboardMonitorServiceTests.swift
+    ├── SearchManagerTests.swift
+    ├── SearchPerformanceTests.swift
+    ├── SmartContentRecognizerTests.swift
+    ├── CloudKitSyncManagerTests.swift
+    ├── HotkeyManagerTests.swift
+    ├── ErrorHandlingTests.swift
+    ├── MockPasteboard.swift                # Test utilities and mocks
     └── ClipboardCoreTests.swift
 ```
 
@@ -80,16 +105,48 @@ ClipboardCore/
 
 ```
 ClipboardUI/
-├── Package.swift                   # Package configuration with Core and Security dependencies
+├── Package.swift                             # Package configuration with Core and Security dependencies
+├── Package.resolved                          # Resolved dependencies
 ├── Sources/ClipboardUI/
 │   ├── Views/
-│   │   └── ClipboardItemRow.swift  # Individual clipboard item view
+│   │   ├── ClipboardHistoryView.swift        # Main clipboard history interface
+│   │   ├── ClipboardItemRow.swift            # Individual clipboard item view
+│   │   ├── SettingsView.swift                # Main settings interface
+│   │   ├── HotkeySettingsView.swift          # Hotkey configuration view
+│   │   └── AppearanceSettingsView.swift      # Theme and appearance settings
 │   ├── Components/
-│   │   └── ContentTypeIcon.swift   # Content type icon component
-│   └── ClipboardUI.swift           # Package entry point
+│   │   ├── SearchBar.swift                   # Search input component
+│   │   ├── FilterBar.swift                   # Content filtering controls
+│   │   ├── ContentTypeIcon.swift             # Content type icon component
+│   │   ├── SmartActionsView.swift            # Smart action buttons
+│   │   ├── SwipeActionsView.swift            # Swipe gesture actions
+│   │   └── ClipboardItemContextMenu.swift    # Right-click context menu
+│   ├── Controllers/
+│   │   ├── MenuBarExtraManager.swift         # Menu bar integration controller
+│   │   ├── ClipboardWindowController.swift   # Window management controller
+│   │   ├── HotkeyEventProcessor.swift        # Hotkey event handling
+│   │   ├── NotificationManager.swift         # System notifications controller
+│   │   └── AccessibilityManager.swift        # Accessibility features controller
+│   ├── Models/
+│   │   ├── SettingsManager.swift             # User settings management
+│   │   ├── AppearanceManager.swift           # Theme and appearance management
+│   │   └── ContentFilter.swift               # Content filtering model
+│   └── ClipboardUI.swift                     # Package entry point
 └── Tests/ClipboardUITests/
+    ├── ClipboardHistoryViewTests.swift
     ├── ClipboardItemRowTests.swift
+    ├── SettingsViewTests.swift
+    ├── SearchBarTests.swift
+    ├── FilterBarTests.swift
     ├── ContentTypeIconTests.swift
+    ├── SmartActionsViewTests.swift
+    ├── SwipeActionsTests.swift
+    ├── ClipboardItemContextMenuTests.swift
+    ├── MenuBarExtraManagerTests.swift
+    ├── ClipboardWindowControllerTests.swift
+    ├── HotkeyEventProcessorTests.swift
+    ├── NotificationManagerTests.swift
+    ├── AccessibilityManagerTests.swift
     └── ClipboardUITests.swift
 ```
 
@@ -136,25 +193,45 @@ import ClipboardSecurity
 ## Key Architectural Principles
 
 ### Separation of Concerns
-- **UI Layer**: SwiftUI views and user interaction (ClipboardUI)
-- **Business Layer**: Core application logic and rules (ClipboardCore)  
+- **UI Layer**: SwiftUI views, controllers, and user interaction (ClipboardUI)
+  - Views: User interface components and screens
+  - Controllers: System integration and event handling (MenuBar, Hotkeys, Notifications, Accessibility)
+  - Models: UI state management and user preferences
+- **Business Layer**: Core application logic and rules (ClipboardCore)
+  - Services: Business logic services (History, Monitor, Search, Sync, Recognition)
+  - Models: Domain data models and business entities
 - **Security Layer**: Encryption, keychain, sensitive data handling (ClipboardSecurity)
+  - Security: Content detection, encryption, keychain management
 - **App Layer**: SwiftUI app entry point and MenuBarExtra integration
+  - Main app target with system-level integration
 
 ### Platform Integration
 - **Native macOS**: SwiftUI with MenuBarExtra for modern macOS development
-- **System Integration**: NSPasteboard monitoring and background operation
-- **Performance**: Optimized for macOS clipboard monitoring efficiency
-- **Accessibility**: Built-in SwiftUI accessibility support
+- **System Integration**: NSPasteboard monitoring, Carbon HotKey API, and background operation
+- **CloudKit Integration**: Device synchronization with conflict resolution and offline support
+- **Notification Integration**: UserNotifications framework for system-level notifications
+- **Accessibility Integration**: VoiceOver support, keyboard navigation, and accessibility compliance
+- **Window Management**: Custom NSWindow integration for floating interface
+- **Performance**: Memory-optimized clipboard monitoring with efficient search indexing
+- **Security Integration**: Keychain Services and CryptoKit for data protection
 
 ### Testability
-- **Protocol-Based Design**: All major components behind protocols
-- **Package Isolation**: Each package independently testable
-- **Comprehensive Testing**: Unit tests for all business logic
-- **Test-Driven Development**: Tests written alongside implementation
+- **Protocol-Based Design**: All major components behind protocols for easy mocking and testing
+- **Package Isolation**: Each package independently testable with focused test suites
+- **Comprehensive Testing**: Unit tests for all business logic with SwiftTesting framework
+- **Test-Driven Development**: TDD methodology with tests written before implementation
+- **Performance Testing**: Dedicated performance tests for search and memory optimization
+- **Integration Testing**: Cross-package integration tests for complete workflows
+- **Mock Infrastructure**: Comprehensive mocking utilities (MockPasteboard, TestDataProvider)
+- **Error Testing**: Dedicated tests for error handling and recovery mechanisms
 
 ### Security and Privacy
 - **Security-First**: Dedicated ClipboardSecurity package for all sensitive operations
-- **Local-First**: Default to local storage and processing
-- **Encryption by Default**: CryptoKit-based encryption for sensitive data
-- **Keychain Integration**: Secure storage using native macOS keychain
+- **Local-First**: Default to local storage and processing with optional CloudKit sync
+- **Encryption by Default**: CryptoKit-based AES-GCM encryption for sensitive data
+- **Keychain Integration**: Secure storage using native macOS keychain for encryption keys
+- **Sensitive Content Detection**: Automatic detection of passwords, API keys, credit cards
+- **Data Classification**: Automatic categorization with security warnings for sensitive content
+- **Audit Logging**: Security event logging for sensitive data interactions
+- **Memory Protection**: Secure memory handling for clipboard data
+- **Recovery Mechanisms**: Robust error recovery with data integrity validation

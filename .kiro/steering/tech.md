@@ -29,20 +29,32 @@ The project uses Swift Package Manager (SPM) with a modular package structure:
 ### ClipboardCore Package  
 - **Purpose**: Business logic and data management
 - **Dependencies**: ClipboardSecurity
-- **Components**: Core clipboard functionality and data models
+- **Components**:
+  - ClipboardHistoryManager: Clipboard data management with memory optimization
+  - ClipboardMonitorService: NSPasteboard monitoring and content detection
+  - SearchManager: Advanced search with indexing and fuzzy matching
+  - SmartContentRecognizer: Pattern recognition for URLs, emails, phone numbers, colors
+  - CloudKitSyncManager: Device synchronization with conflict resolution
+  - HotkeyManager: Global hotkey registration using Carbon API
+  - ErrorLogger & ErrorRecovery: Comprehensive error handling and recovery
+  - Data Models: ClipboardItemModel, CategoryModel, SmartActionModel
 
 ### ClipboardUI Package
 - **Purpose**: User interface components
 - **Dependencies**: ClipboardCore, ClipboardSecurity
-- **Components**: SwiftUI views and reusable UI components
+- **Components**:
+  - Views: ClipboardHistoryView, ClipboardItemRow, SettingsView, HotkeySettingsView, AppearanceSettingsView
+  - Components: SearchBar, FilterBar, ContentTypeIcon, SmartActionsView, SwipeActionsView, ClipboardItemContextMenu
+  - Controllers: MenuBarExtraManager, ClipboardWindowController, HotkeyEventProcessor, NotificationManager, AccessibilityManager
+  - Models: SettingsManager, AppearanceManager, ContentFilter
 
 ## Development Environment
 
 ### Required Tools
-- **Xcode**: 14.0+ (latest stable recommended)
+- **Xcode**: 15.0+ (latest stable recommended for SwiftTesting support)
 - **XcodeGen**: Project file generation from YAML configuration
 - **Swift Package Manager**: Primary dependency management
-- **Testing**: SwiftTesting framework for modern test-driven development
+- **Testing**: SwiftTesting framework for modern test-driven development with TDD methodology
 
 ## External Dependencies
 - **KeychainSwift**: Secure keychain access for sensitive data storage
@@ -97,20 +109,34 @@ swift package resolve
 - **LSUIElement**: Application runs as background utility without dock icon
 
 ### Key Configuration Variables
-- `CLIPBOARD_HISTORY_LIMIT`: Maximum number of clipboard items to store
+- `CLIPBOARD_HISTORY_LIMIT`: Maximum number of clipboard items to store (default: 1000)
 - `DEBUG_LOGGING`: Control logging verbosity for development
 - `BACKGROUND_MONITORING`: Enable background clipboard monitoring
+- `CLOUDKIT_SYNC_ENABLED`: Control CloudKit synchronization feature
+- `HOTKEY_ENABLED`: Enable global hotkey functionality
+- `SMART_ACTIONS_ENABLED`: Enable smart content recognition and actions
+- `NOTIFICATIONS_ENABLED`: Control system notifications
+- `ACCESSIBILITY_MODE`: Enhanced accessibility features
+- `MEMORY_LIMIT_MB`: Memory usage limit for clipboard storage
 
 ## Platform Integration
 
 ### macOS-Specific Technologies
-- **MenuBarExtra**: SwiftUI-based menu bar integration for modern macOS development
-- **NSPasteboard**: Native clipboard monitoring and management
-- **Global Hotkeys**: System-wide keyboard shortcuts for clipboard access
-- **Background Operation**: LSUIElement configuration for background-only operation
+- **MenuBarExtra**: SwiftUI-based menu bar integration with modern macOS development
+- **NSPasteboard**: Native clipboard monitoring and management with real-time content detection
+- **Carbon HotKey API**: System-wide keyboard shortcuts for global clipboard access
+- **CloudKit**: Device-to-device synchronization with conflict resolution and offline support
+- **UserNotifications**: System notifications for sync events and important interactions
+- **Accessibility**: VoiceOver support and keyboard navigation compliance
+- **NSWindow**: Custom window management for floating clipboard interface
+- **Background Operation**: LSUIElement configuration for background-only operation with memory optimization
 
 ## Security Features
-- **CryptoKit**: Built-in encryption using AES-GCM
-- **Keychain Services**: Secure storage for sensitive configuration
-- **Local-First Storage**: Default local storage without cloud dependency
-- **Sensitive Content Detection**: Automatic detection of passwords, API keys, credit cards
+- **CryptoKit**: Built-in encryption using AES-GCM for sensitive data protection
+- **Keychain Services**: Secure storage for encryption keys and sensitive configuration
+- **Local-First Storage**: Default local storage without cloud dependency, with optional CloudKit sync
+- **Sensitive Content Detection**: Automatic detection of passwords, API keys, credit cards, and other sensitive patterns
+- **Data Classification**: Automatic categorization of sensitive content with security warnings
+- **Secure Memory Handling**: Memory protection for sensitive clipboard data
+- **Audit Logging**: Security event logging for sensitive data interactions
+- **Recovery Mechanisms**: Robust error recovery and data integrity validation
