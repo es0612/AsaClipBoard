@@ -3,6 +3,11 @@ import SwiftData
 import NaturalLanguage
 import Observation
 
+/// コンテンツフィルタープロトコル
+public protocol ContentFilterProtocol {
+    var selectedTypes: [ClipboardContentType] { get }
+}
+
 /// 高速検索とフィルタリング機能を提供するサービス
 @Observable
 public class SearchManager {
@@ -122,6 +127,19 @@ public class SearchManager {
         } catch {
             print("Date range search failed: \(error)")
             return []
+        }
+    }
+    
+    /// フィルター付き検索
+    public func searchWithFilter(query: String, filter: ContentFilterProtocol) async -> [ClipboardItemModel] {
+        let searchResults = await search(query: query)
+        
+        // フィルターの条件でフィルタリング
+        return searchResults.filter { item in
+            if filter.selectedTypes.isEmpty {
+                return true // フィルターが指定されていない場合は全て表示
+            }
+            return filter.selectedTypes.contains(item.contentType)
         }
     }
     

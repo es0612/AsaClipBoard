@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 import RegexBuilder
 
 /// スマートコンテンツ認識サービス
@@ -41,39 +42,30 @@ public struct SmartContentRecognizer {
         var actions: [SmartAction] = []
         
         do {
+            let nsText = text as NSString
+            
             // HTTP/HTTPS URL検出
             let httpRegex = try NSRegularExpression(pattern: #"https?://\S+"#)
-            let httpMatches = httpRegex.matches(in: text, range: NSRange(location: 0, length: text.count))
+            let httpMatches = httpRegex.matches(in: text, range: NSRange(location: 0, length: nsText.length))
             
             for match in httpMatches {
-                if let range = Range(match.range, in: text) {
-                    let url = String(text[range])
-                    actions.append(SmartAction(
-                        actionType: "openURL",
-                        title: "URLを開く",
-                        systemImage: "safari",
-                        data: url
-                    ))
+                let matchString = nsText.substring(with: match.range)
+                if let url = URL(string: matchString) {
+                    actions.append(.openURL(url))
                 }
             }
             
             // WWW URL検出
             let wwwRegex = try NSRegularExpression(pattern: #"www\.\S+"#)
-            let wwwMatches = wwwRegex.matches(in: text, range: NSRange(location: 0, length: text.count))
+            let wwwMatches = wwwRegex.matches(in: text, range: NSRange(location: 0, length: nsText.length))
             
             for match in wwwMatches {
-                if let range = Range(match.range, in: text) {
-                    let url = String(text[range])
-                    actions.append(SmartAction(
-                        actionType: "openURL",
-                        title: "URLを開く",
-                        systemImage: "safari",
-                        data: url
-                    ))
+                let matchString = nsText.substring(with: match.range)
+                if let url = URL(string: "https://" + matchString) {
+                    actions.append(.openURL(url))
                 }
             }
         } catch {
-            // Regex作成に失敗した場合はログに記録
             print("URL regex failed: \(error)")
         }
         
@@ -84,19 +76,13 @@ public struct SmartContentRecognizer {
         var actions: [SmartAction] = []
         
         do {
+            let nsText = text as NSString
             let emailRegex = try NSRegularExpression(pattern: #"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,64}"#)
-            let matches = emailRegex.matches(in: text, range: NSRange(location: 0, length: text.count))
+            let matches = emailRegex.matches(in: text, range: NSRange(location: 0, length: nsText.length))
             
             for match in matches {
-                if let range = Range(match.range, in: text) {
-                    let email = String(text[range])
-                    actions.append(SmartAction(
-                        actionType: "composeEmail",
-                        title: "メールを作成",
-                        systemImage: "envelope",
-                        data: email
-                    ))
-                }
+                let email = nsText.substring(with: match.range)
+                actions.append(.composeEmail(email))
             }
         } catch {
             print("Email regex failed: \(error)")
@@ -109,27 +95,13 @@ public struct SmartContentRecognizer {
         var actions: [SmartAction] = []
         
         do {
+            let nsText = text as NSString
             let phoneRegex = try NSRegularExpression(pattern: #"(\+\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}"#)
-            let matches = phoneRegex.matches(in: text, range: NSRange(location: 0, length: text.count))
+            let matches = phoneRegex.matches(in: text, range: NSRange(location: 0, length: nsText.length))
             
             for match in matches {
-                if let range = Range(match.range, in: text) {
-                    let phoneNumber = String(text[range])
-                    // 電話をかけるアクションを追加
-                    actions.append(SmartAction(
-                        actionType: "callPhone",
-                        title: "電話をかける",
-                        systemImage: "phone",
-                        data: phoneNumber
-                    ))
-                    // SMSを送るアクションを追加
-                    actions.append(SmartAction(
-                        actionType: "sendSMS",
-                        title: "メッセージを送る",
-                        systemImage: "message",
-                        data: phoneNumber
-                    ))
-                }
+                let phoneNumber = nsText.substring(with: match.range)
+                actions.append(.call(phoneNumber))
             }
         } catch {
             print("Phone regex failed: \(error)")
@@ -142,18 +114,14 @@ public struct SmartContentRecognizer {
         var actions: [SmartAction] = []
         
         do {
+            let nsText = text as NSString
             let hexColorRegex = try NSRegularExpression(pattern: #"#[0-9a-fA-F]{3,8}"#)
-            let matches = hexColorRegex.matches(in: text, range: NSRange(location: 0, length: text.count))
+            let matches = hexColorRegex.matches(in: text, range: NSRange(location: 0, length: nsText.length))
             
             for match in matches {
-                if let range = Range(match.range, in: text) {
-                    let colorCode = String(text[range])
-                    actions.append(SmartAction(
-                        actionType: "showColor",
-                        title: "色を表示",
-                        systemImage: "paintpalette",
-                        data: colorCode
-                    ))
+                let colorString = nsText.substring(with: match.range)
+                if let color = NSColor(hex: colorString) {
+                    actions.append(.showColorPreview(color))
                 }
             }
         } catch {
@@ -172,20 +140,35 @@ public struct SmartContentRecognizer {
         var actions: [SmartAction] = []
         
         if indicatorCount >= 2 {
-            actions.append(SmartAction(
-                actionType: "copyCode",
-                title: "コードをコピー",
-                systemImage: "doc.text",
-                data: text
-            ))
-            actions.append(SmartAction(
-                actionType: "formatCode",
-                title: "コードをフォーマット",
-                systemImage: "chevron.left.forwardslash.chevron.right",
-                data: text
-            ))
+            let language = detectLanguage(from: text)
+            actions.append(.highlightCode(text, language: language))
         }
         
         return actions
+    }
+    
+    private static func detectLanguage(from text: String) -> String {
+        let languageIndicators = [
+            ("swift", ["func ", "var ", "let ", "import ", "class ", "struct "]),
+            ("javascript", ["function ", "var ", "let ", "const ", "=> ", "JSON."]),
+            ("python", ["def ", "import ", "class ", "print(", "self.", "__init__"]),
+            ("java", ["public class", "private ", "public ", "import ", "System.out"]),
+            ("typescript", ["interface ", "type ", "const ", "function ", ": string", ": number"])
+        ]
+        
+        var maxMatches = 0
+        var detectedLanguage = "unknown"
+        
+        for (language, indicators) in languageIndicators {
+            let matchCount = indicators.reduce(0) { count, indicator in
+                count + (text.contains(indicator) ? 1 : 0)
+            }
+            if matchCount > maxMatches {
+                maxMatches = matchCount
+                detectedLanguage = language
+            }
+        }
+        
+        return maxMatches > 0 ? detectedLanguage : "unknown"
     }
 }
