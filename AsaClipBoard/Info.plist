@@ -28,5 +28,79 @@
     <string></string>
     <key>NSPrincipalClass</key>
     <string></string>
+    
+    <!-- App Store配布用設定 -->
+    <key>NSAccessibilityUsageDescription</key>
+    <string>このアプリはクリップボードの変更を監視するためにアクセシビリティ権限が必要です。システム全体のコピー操作を検出し、履歴を自動的に保存するために使用されます。</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>グローバルホットキー機能のためにAppleEventsへのアクセスが必要です。設定したショートカットキーでクリップボード履歴ウィンドウを表示するために使用されます。</string>
+    
+    <!-- アプリケーション情報 -->
+    <key>CFBundleDisplayName</key>
+    <string>AsaClipBoard</string>
+    <key>NSHumanReadableDescription</key>
+    <string>高機能なクリップボード履歴管理ツール。スマートコンテンツ認識、CloudKit同期、セキュリティ機能を搭載したmacOS専用アプリです。</string>
+    
+    <!-- カテゴリとキーワード -->
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.utilities</string>
+    <key>CFBundleKeywords</key>
+    <array>
+        <string>クリップボード</string>
+        <string>履歴</string>
+        <string>コピー</string>
+        <string>ペースト</string>
+        <string>効率化</string>
+        <string>生産性</string>
+        <string>ユーティリティ</string>
+        <string>clipboard</string>
+        <string>history</string>
+        <string>productivity</string>
+        <string>utility</string>
+    </array>
+    
+    <!-- 対応言語 -->
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>ja</string>
+        <string>en</string>
+    </array>
+    
+    <!-- URL Scheme（将来の拡張用） -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.asaclipboard.url</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>asaclipboard</string>
+            </array>
+        </dict>
+    </array>
+    
+    <!-- App Store用メタデータ -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+    <key>NSSupportsAutomaticTermination</key>
+    <true/>
+    <key>NSSupportsSuddenTermination</key>
+    <false/>
+    <key>LSBackgroundOnly</key>
+    <false/>
+    
+    <!-- High DPIサポート -->
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSRequiresAquaSystemAppearance</key>
+    <false/>
+    
+    <!-- デバイス要件 -->
+    <key>LSRequiresNativeExecution</key>
+    <true/>
+    <key>CFBundleSupportedPlatforms</key>
+    <array>
+        <string>MacOSX</string>
+    </array>
 </dict>
 </plist>
