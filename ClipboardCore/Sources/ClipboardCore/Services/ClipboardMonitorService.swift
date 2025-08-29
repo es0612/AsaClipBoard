@@ -149,6 +149,20 @@ public class ClipboardMonitorService {
             print("Error saving clipboard item: \(error)")
         }
     }
+
+    
+    /// クリップボード変更のシミュレーション（ベンチマーク用）
+    /// - Parameter changeCount: シミュレートする変更回数
+    /// - Note: このメソッドはベンチマークテスト専用です
+    public func simulateClipboardChange(changeCount: Int = 1) async {
+        for i in 0..<changeCount {
+            let simulatedContent = "Simulated clipboard content \(i) - \(UUID().uuidString)"
+            await processTestClipboardContent(simulatedContent)
+            
+            // 実際の処理をシミュレートするために短時間待機
+            try? await Task.sleep(nanoseconds: 1_000_000) // 1ms
+        }
+    }
     #endif
 }
 

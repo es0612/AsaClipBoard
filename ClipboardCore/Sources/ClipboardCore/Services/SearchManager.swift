@@ -336,6 +336,14 @@ public class SearchManager {
         indexLastUpdated = Date()
         clearCache() // インデックス更新時はキャッシュもクリア
     }
+
+    // MARK: - ベンチマーク用パブリックメソッド
+    
+    /// 検索インデックスを再構築（ベンチマーク用）
+    /// - Note: このメソッドはベンチマークテスト専用です
+    public func buildSearchIndexForBenchmark() async {
+        await buildSearchIndex()
+    }
     
     /// インデックス統計情報を取得（デバッグ用）
     public func getIndexStatistics() -> (totalWords: Int, totalEntries: Int) {

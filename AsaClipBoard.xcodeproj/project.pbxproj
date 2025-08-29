@@ -13,6 +13,7 @@
 		EDEBD0AA13D844C0994DCE29 /* ClipboardSecurity in Frameworks */ = {isa = PBXBuildFile; productRef = 9E0F33B4BA21CA0C4C78EFE6 /* ClipboardSecurity */; };
 		EE3E152ADBE3DFDE245AF413 /* ClipboardUI in Frameworks */ = {isa = PBXBuildFile; productRef = 45F3016367847E031DD57E5C /* ClipboardUI */; };
 		F54AC2A6638571C26297772D /* AsaClipBoardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AAE316D4BB581A7A73F0021 /* AsaClipBoardApp.swift */; };
+		A123456789ABCDEF12345678 /* AsaClipBoardUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B123456789ABCDEF12345678 /* AsaClipBoardUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,8 @@
 		B6E2F41970895F112059CDA3 /* ClipboardSecurity */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ClipboardSecurity; path = ClipboardSecurity; sourceTree = SOURCE_ROOT; };
 		BBF2ACA3B1CADBFF49635ADF /* ClipboardUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ClipboardUI; path = ClipboardUI; sourceTree = SOURCE_ROOT; };
 		D01EEBE014686D507C6C18C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B123456789ABCDEF12345678 /* AsaClipBoardUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsaClipBoardUITests.swift; sourceTree = "<group>"; };
+		C123456789ABCDEF12345678 /* AsaClipBoardUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AsaClipBoardUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +37,13 @@
 				EE3E152ADBE3DFDE245AF413 /* ClipboardUI in Frameworks */,
 				CB1523C10D7462484BCEA39B /* ClipboardCore in Frameworks */,
 				EDEBD0AA13D844C0994DCE29 /* ClipboardSecurity in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D123456789ABCDEF12345678 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,6 +64,7 @@
 			isa = PBXGroup;
 			children = (
 				EDDD986C9129F804D5FCC65E /* AsaClipBoard */,
+				E123456789ABCDEF12345678 /* AsaClipBoardUITests */,
 				017630C22551F6ABD97C67B9 /* Packages */,
 				F41BA55B075BDB6C0CFD793E /* Products */,
 			);
@@ -70,10 +81,19 @@
 			path = AsaClipBoard;
 			sourceTree = "<group>";
 		};
+		E123456789ABCDEF12345678 /* AsaClipBoardUITests */ = {
+			isa = PBXGroup;
+			children = (
+				B123456789ABCDEF12345678 /* AsaClipBoardUITests.swift */,
+			);
+			path = AsaClipBoardUITests;
+			sourceTree = "<group>";
+		};
 		F41BA55B075BDB6C0CFD793E /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				8D8FFC944140167F479614D4 /* AsaClipBoard.app */,
+				C123456789ABCDEF12345678 /* AsaClipBoardUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,6 +121,23 @@
 			productName = AsaClipBoard;
 			productReference = 8D8FFC944140167F479614D4 /* AsaClipBoard.app */;
 			productType = "com.apple.product-type.application";
+		};
+		F123456789ABCDEF12345678 /* AsaClipBoardUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = G123456789ABCDEF12345678 /* Build configuration list for PBXNativeTarget "AsaClipBoardUITests" */;
+			buildPhases = (
+				H123456789ABCDEF12345678 /* Sources */,
+				D123456789ABCDEF12345678 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				I123456789ABCDEF12345678 /* PBXTargetDependency */,
+			);
+			name = AsaClipBoardUITests;
+			productName = AsaClipBoardUITests;
+			productReference = C123456789ABCDEF12345678 /* AsaClipBoardUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -132,6 +169,7 @@
 			projectRoot = "";
 			targets = (
 				9FF1068D4712844D8C1F443E /* AsaClipBoard */,
+				F123456789ABCDEF12345678 /* AsaClipBoardUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -144,6 +182,14 @@
 				F54AC2A6638571C26297772D /* AsaClipBoardApp.swift in Sources */,
 				DF2FADDDF2A5EA03F513F5FC /* ContentView.swift in Sources */,
 				BA3F576065BDF616DB298BAA /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		H123456789ABCDEF12345678 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A123456789ABCDEF12345678 /* AsaClipBoardUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +354,38 @@
 			};
 			name = Release;
 		};
+		J123456789ABCDEF12345678 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shinya.AsaClipBoard.AsaClipBoardUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.9;
+				TEST_TARGET_NAME = AsaClipBoard;
+			};
+			name = Debug;
+		};
+		K123456789ABCDEF12345678 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shinya.AsaClipBoard.AsaClipBoardUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = AsaClipBoard;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -329,7 +407,34 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		G123456789ABCDEF12345678 /* Build configuration list for PBXNativeTarget "AsaClipBoardUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				J123456789ABCDEF12345678 /* Debug */,
+				K123456789ABCDEF12345678 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 /* End XCConfigurationList section */
+
+/* Begin PBXContainerItemProxy section */
+		L123456789ABCDEF12345678 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0860F9F77259FC2BBDF84763 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9FF1068D4712844D8C1F443E;
+			remoteInfo = AsaClipBoard;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		I123456789ABCDEF12345678 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9FF1068D4712844D8C1F443E /* AsaClipBoard */;
+			targetProxy = L123456789ABCDEF12345678 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCLocalSwiftPackageReference section */
 		3FB49A10A3CEF07915ABD27D /* XCLocalSwiftPackageReference "ClipboardCore" */ = {
