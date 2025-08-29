@@ -37,6 +37,8 @@ The project uses Swift Package Manager (SPM) with a modular package structure:
   - CloudKitSyncManager: Device synchronization with conflict resolution
   - HotkeyManager: Global hotkey registration using Carbon API
   - ErrorLogger & ErrorRecovery: Comprehensive error handling and recovery
+  - PerformanceMonitor: System performance monitoring and optimization
+  - CPUUsageMonitor: CPU usage tracking and performance analysis
   - Data Models: ClipboardItemModel, CategoryModel, SmartActionModel
 
 ### ClipboardUI Package
@@ -48,11 +50,18 @@ The project uses Swift Package Manager (SPM) with a modular package structure:
   - Controllers: MenuBarExtraManager, ClipboardWindowController, HotkeyEventProcessor, NotificationManager, AccessibilityManager
   - Models: SettingsManager, AppearanceManager, ContentFilter
 
+### IntegrationTests Package
+- **Purpose**: End-to-end integration testing across packages
+- **Dependencies**: ClipboardCore, ClipboardUI, ClipboardSecurity
+- **Components**:
+  - EndToEndWorkflowTests: Complete user workflow testing
+  - PackageIntegrationTests: Cross-package integration verification
+
 ## Development Environment
 
 ### Required Tools
 - **Xcode**: 15.0+ (latest stable recommended for SwiftTesting support)
-- **XcodeGen**: Project file generation from YAML configuration
+- **XcodeGen**: Project file generation from YAML configuration (`project.yml`)
 - **Swift Package Manager**: Primary dependency management
 - **Testing**: SwiftTesting framework for modern test-driven development with TDD methodology
 
@@ -86,6 +95,9 @@ swift test
 swift test
 
 # In ClipboardUI/
+swift test
+
+# In IntegrationTests/
 swift test
 ```
 

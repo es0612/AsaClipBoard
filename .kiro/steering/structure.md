@@ -4,20 +4,29 @@
 
 ```
 AsaClipBoard/
-├── .gitignore              # Xcode and Swift ignore patterns
-├── .kiro/                  # Kiro spec-driven development files
-│   ├── steering/           # Project guidance documents
-│   └── specs/              # Feature specifications
-├── .claude/                # Claude Code commands and hooks
-├── CLAUDE.md               # Claude Code project instructions
-├── LICENSE                 # MIT License
-├── README.md               # Project documentation
-├── project.yml             # XcodeGen configuration
-├── AsaClipBoard.xcodeproj  # Generated Xcode project
-├── AsaClipBoard/           # Main macOS app target
-├── ClipboardSecurity/      # Security SPM package
-├── ClipboardCore/          # Core logic SPM package
-└── ClipboardUI/            # UI components SPM package
+├── .gitignore                  # Xcode and Swift ignore patterns
+├── .kiro/                      # Kiro spec-driven development files
+│   ├── steering/               # Project guidance documents
+│   └── specs/                  # Feature specifications
+├── .claude/                    # Claude Code commands and hooks
+├── AppStore-Distribution.md    # App Store submission guide and configuration
+├── CLAUDE.md                   # Claude Code project instructions
+├── LICENSE                     # MIT License
+├── Privacy-Policy.md           # GDPR-compliant privacy policy
+├── QA-Checklist.md            # Quality assurance verification checklist
+├── README.md                   # Project documentation
+├── Release-Notes-v1.0.0.md    # Version 1.0.0 release notes
+├── Terms-of-Service.md         # Legal terms and conditions
+├── User-Manual-EN.md           # English user manual
+├── User-Manual-JP.md           # Japanese user manual
+├── project.yml                 # XcodeGen configuration
+├── AsaClipBoard.xcodeproj      # Generated Xcode project
+├── AsaClipBoard/               # Main macOS app target
+├── AsaClipBoardUITests/        # UI automation tests
+├── ClipboardSecurity/          # Security SPM package
+├── ClipboardCore/              # Core logic SPM package
+├── ClipboardUI/                # UI components SPM package
+└── IntegrationTests/           # End-to-end integration tests SPM package
 ```
 
 ## SPM Package Structure
@@ -80,6 +89,8 @@ ClipboardCore/
 │   │   ├── SmartContentRecognizer.swift    # Content pattern recognition
 │   │   ├── CloudKitSyncManager.swift       # CloudKit synchronization
 │   │   ├── HotkeyManager.swift             # Global hotkey management
+│   │   ├── CPUUsageMonitor.swift           # CPU usage tracking and analysis
+│   │   ├── PerformanceMonitor.swift        # System performance monitoring
 │   │   ├── ClipboardError.swift            # Error definitions and types
 │   │   ├── ErrorLogger.swift               # Comprehensive error logging
 │   │   └── ErrorRecovery.swift             # Error recovery mechanisms
@@ -97,6 +108,7 @@ ClipboardCore/
     ├── CloudKitSyncManagerTests.swift
     ├── HotkeyManagerTests.swift
     ├── ErrorHandlingTests.swift
+    ├── BenchmarkTests.swift                # Performance benchmark tests
     ├── MockPasteboard.swift                # Test utilities and mocks
     └── ClipboardCoreTests.swift
 ```
@@ -148,6 +160,26 @@ ClipboardUI/
     ├── NotificationManagerTests.swift
     ├── AccessibilityManagerTests.swift
     └── ClipboardUITests.swift
+```
+
+### IntegrationTests Package
+
+```
+IntegrationTests/
+├── Package.swift                         # Package configuration with all dependencies
+├── Package.resolved                      # Resolved dependencies
+├── Sources/IntegrationTests/
+│   └── IntegrationTests.swift            # Package entry point
+└── Tests/
+    ├── EndToEndWorkflowTests.swift       # Complete user workflow testing
+    └── PackageIntegrationTests.swift     # Cross-package integration verification
+```
+
+### AsaClipBoardUITests (UI Automation Tests)
+
+```
+AsaClipBoardUITests/
+└── AsaClipBoardUITests.swift             # UI automation tests with XCUITest
 ```
 
 ## Code Organization Patterns
