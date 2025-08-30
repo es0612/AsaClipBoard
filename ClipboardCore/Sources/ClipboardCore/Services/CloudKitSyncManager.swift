@@ -32,7 +32,8 @@ public class CloudKitSyncManager {
     private let isTestMode: Bool
     
     // オフライン同期キュー
-    private var offlineQueue: [ClipboardItemModel] = []
+    // オフラインキューはモデルID（UUID）で管理してスレッド安全性を高める
+    private var offlineQueue: [UUID] = []
     private let queueAccessQueue = DispatchQueue(label: "com.kiro.AsaClipBoard.syncQueue", attributes: .concurrent)
     
     public init(modelContext: ModelContext, isTestMode: Bool = false) {
@@ -194,9 +195,10 @@ public class CloudKitSyncManager {
     
     /// オフライン同期キューにアイテムを追加
     public func queueForOfflineSync(_ item: ClipboardItemModel) async {
+        let id = item.id
         await withCheckedContinuation { continuation in
             queueAccessQueue.async(flags: .barrier) {
-                self.offlineQueue.append(item)
+                self.offlineQueue.append(id)
                 continuation.resume()
             }
         }
@@ -218,33 +220,33 @@ public class CloudKitSyncManager {
                 continuation.resume(returning: self.offlineQueue)
             }
         }
-        
+
         guard !queueSnapshot.isEmpty else {
             return true
         }
-        
+
         do {
             syncStatus = .syncing
-            
-            // キューのアイテムを同期
+
+            // IDからモデルを取得して同期
             var recordsToSave: [CKRecord] = []
-            for item in queueSnapshot {
-                let record = await convertToCloudKitRecord(item)
-                recordsToSave.append(record)
+            for id in queueSnapshot {
+                if let item = try await fetchItem(by: id) {
+                    let record = await convertToCloudKitRecord(item)
+                    recordsToSave.append(record)
+                }
             }
-            
+
             if !recordsToSave.isEmpty && !isTestMode {
                 let operation = CKModifyRecordsOperation(recordsToSave: recordsToSave)
                 operation.savePolicy = .ifServerRecordUnchanged
                 operation.qualityOfService = .userInitiated
-                
-                // 実際の同期処理（テスト環境では省略）
+                // 実同期はコメントアウト
                 // try await privateDatabase.add(operation)
             }
-            
-            // 成功した場合はキューをクリア
+
             await clearOfflineQueue()
-            
+
             syncStatus = .success
             return true
         } catch {
@@ -275,5 +277,16 @@ public class CloudKitSyncManager {
         // 実際の実装では同期フラグでフィルタリングするが、
         // テスト用に全アイテムを返す
         return allItems
+    }
+
+    /// 単一アイテムをIDで取得
+    private func fetchItem(by id: UUID) async throws -> ClipboardItemModel? {
+        let descriptor = FetchDescriptor<ClipboardItemModel>(
+            predicate: #Predicate<ClipboardItemModel> { item in
+                item.id == id
+            }
+        )
+        let items = try modelContext.fetch(descriptor)
+        return items.first
     }
 }

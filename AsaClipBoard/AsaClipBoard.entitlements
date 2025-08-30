@@ -5,29 +5,19 @@
     <!-- App Sandbox有効化 -->
     <key>com.apple.security.app-sandbox</key>
     <true/>
-    
+
     <!-- ネットワーク接続（CloudKit同期用） -->
     <key>com.apple.security.network.client</key>
     <true/>
-    
+
     <!-- ファイル読み取り・書き込み権限（ユーザー選択ファイル） -->
     <key>com.apple.security.files.user-selected.read-write</key>
     <true/>
-    
-    <!-- クリップボードアクセス -->
-    <key>com.apple.security.device.clipboard</key>
-    <true/>
-    
-    <!-- ホットキー用システムイベント -->
+
+    <!-- Apple Events の自動化（不要なら削除検討） -->
     <key>com.apple.security.automation.apple-events</key>
     <true/>
-    
-    <!-- Keychain共有（セキュアなデータ保存用） -->
-    <key>keychain-access-groups</key>
-    <array>
-        <string>$(AppIdentifierPrefix)com.asaclipboard.keychain</string>
-    </array>
-    
+
     <!-- CloudKit（iCloud同期用） -->
     <key>com.apple.developer.icloud-services</key>
     <array>
@@ -35,23 +25,7 @@
     </array>
     <key>com.apple.developer.ubiquity-container-identifiers</key>
     <array>
-        <string>iCloud.$(CFBundleIdentifier)</string>
+        <string>iCloud.com.kiro.AsaClipBoard</string>
     </array>
-    
-    <!-- アクセシビリティAPI使用 -->
-    <key>com.apple.security.automation.apple-events</key>
-    <true/>
-    
-    <!-- システム通知 -->
-    <key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
-    <array>
-        <string>com.apple.usernotifications.notify</string>
-    </array>
-    
-    <!-- App Store配布用オプション -->
-    <key>com.apple.security.app-sandbox</key>
-    <true/>
-    <key>com.apple.security.inherit</key>
-    <false/>
 </dict>
 </plist>
