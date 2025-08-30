@@ -43,9 +43,10 @@ public enum SmartAction: Equatable, Sendable {
         switch self {
         case .openURL: return "openURL"
         case .composeEmail: return "composeEmail"
-        case .call: return "call"
-        case .showColorPreview: return "showColorPreview"
-        case .highlightCode: return "highlightCode"
+        // テスト仕様に合わせた名称（後方互換はtoSmartAction側で対応）
+        case .call: return "callPhone"
+        case .showColorPreview: return "showColor"
+        case .highlightCode: return "copyCode"
         }
     }
     
@@ -92,18 +93,43 @@ extension NSColor {
     }
     
     convenience init?(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-        let scanner = Scanner(string: hex.hasPrefix("#") ? String(hex.dropFirst()) : hex)
-        
-        var hexNumber: UInt64 = 0
-        if scanner.scanHexInt64(&hexNumber) {
-            self.init(
-                red: CGFloat((hexNumber & 0xff0000) >> 16) / 255,
-                green: CGFloat((hexNumber & 0x00ff00) >> 8) / 255,
-                blue: CGFloat(hexNumber & 0x0000ff) / 255,
-                alpha: 1.0
-            )
-        } else {
+        var clean = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        if clean.hasPrefix("#") { clean.removeFirst() }
+
+        func component(_ str: String, start: Int, len: Int) -> CGFloat? {
+            let startIdx = str.index(str.startIndex, offsetBy: start)
+            let endIdx = str.index(startIdx, offsetBy: len)
+            let substr = String(str[startIdx..<endIdx])
+            guard let value = UInt64(substr, radix: 16) else { return nil }
+            let scale: CGFloat = (len == 1) ? 15.0 : 255.0
+            let normalized = CGFloat(value) / scale
+            return (len == 1) ? (normalized) : (normalized)
+        }
+
+        switch clean.count {
+        case 3: // RGB (4bit each)
+            guard let r = component(clean, start: 0, len: 1),
+                  let g = component(clean, start: 1, len: 1),
+                  let b = component(clean, start: 2, len: 1) else { return nil }
+            self.init(red: r, green: g, blue: b, alpha: 1.0)
+        case 4: // RGBA (4bit each)
+            guard let r = component(clean, start: 0, len: 1),
+                  let g = component(clean, start: 1, len: 1),
+                  let b = component(clean, start: 2, len: 1),
+                  let a = component(clean, start: 3, len: 1) else { return nil }
+            self.init(red: r, green: g, blue: b, alpha: a)
+        case 6: // RRGGBB
+            guard let r = component(clean, start: 0, len: 2),
+                  let g = component(clean, start: 2, len: 2),
+                  let b = component(clean, start: 4, len: 2) else { return nil }
+            self.init(red: r, green: g, blue: b, alpha: 1.0)
+        case 8: // RRGGBBAA
+            guard let r = component(clean, start: 0, len: 2),
+                  let g = component(clean, start: 2, len: 2),
+                  let b = component(clean, start: 4, len: 2),
+                  let a = component(clean, start: 6, len: 2) else { return nil }
+            self.init(red: r, green: g, blue: b, alpha: a)
+        default:
             return nil
         }
     }
@@ -183,12 +209,12 @@ extension SmartActionModel {
             return .openURL(url)
         case "composeEmail":
             return .composeEmail(dataString)
-        case "call":
+        case "call", "callPhone":
             return .call(dataString)
-        case "showColorPreview":
+        case "showColorPreview", "showColor":
             guard let color = NSColor(hex: dataString) else { return nil }
             return .showColorPreview(color)
-        case "highlightCode":
+        case "highlightCode", "copyCode", "formatCode":
             guard let data = actionData.isEmpty ? nil : actionData,
                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: String],
                   let code = json["code"],

@@ -37,14 +37,18 @@ public enum ClipboardContentType: String, CaseIterable, Codable, Sendable {
         // メール検出
         if text.contains("@") && text.contains(".") {
             let emailRegex = try? NSRegularExpression(pattern: #"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,64}"#)
-            if let regex = emailRegex, regex.firstMatch(in: text, range: NSRange(location: 0, length: text.count)) != nil {
+            if let regex = emailRegex,
+               let range = Range(NSRange(text.startIndex..., in: text), in: text),
+               regex.firstMatch(in: text, range: NSRange(range, in: text)) != nil {
                 return .email
             }
         }
         
         // 電話番号検出 - よりしっかりとした電話番号パターンのみ
         let phoneRegex = try? NSRegularExpression(pattern: #"(\+\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3,4}[-.\s]?\d{4}"#)
-        if let regex = phoneRegex, regex.firstMatch(in: text, range: NSRange(location: 0, length: text.count)) != nil {
+        if let regex = phoneRegex,
+           let range = Range(NSRange(text.startIndex..., in: text), in: text),
+           regex.firstMatch(in: text, range: NSRange(range, in: text)) != nil {
             // スペースのみの数字は除外
             if !text.trimmingCharacters(in: .whitespacesAndNewlines).allSatisfy({ $0.isNumber || $0.isWhitespace }) {
                 return .phoneNumber
@@ -54,7 +58,9 @@ public enum ClipboardContentType: String, CaseIterable, Codable, Sendable {
         // カラーコード検出
         if text.contains("#") {
             let hexColorRegex = try? NSRegularExpression(pattern: #"#[0-9a-fA-F]{3,8}"#)
-            if let regex = hexColorRegex, regex.firstMatch(in: text, range: NSRange(location: 0, length: text.count)) != nil {
+            if let regex = hexColorRegex,
+               let range = Range(NSRange(text.startIndex..., in: text), in: text),
+               regex.firstMatch(in: text, range: NSRange(range, in: text)) != nil {
                 return .colorCode
             }
         }

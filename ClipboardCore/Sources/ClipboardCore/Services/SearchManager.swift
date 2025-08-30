@@ -14,6 +14,8 @@ public class SearchManager {
     private let modelContext: ModelContext
     private var searchIndex: [String: Set<UUID>] = [:]
     private let tokenizer = NLTokenizer(unit: .word)
+    // すでにインデックス化済みのIDを追跡（増分更新用）
+    private var indexedItemIDs: Set<UUID> = []
     
     // キャッシュ機能の追加
     private var searchCache: [String: (results: [ClipboardItemModel], timestamp: Date)] = [:]
@@ -82,12 +84,12 @@ public class SearchManager {
             let descriptor = FetchDescriptor<ClipboardItemModel>(
                 sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
             )
-            
             let allItems = try modelContext.fetch(descriptor)
-            
+
             return allItems.filter { item in
-                let range = NSRange(location: 0, length: item.preview.count)
-                return regex.firstMatch(in: item.preview, range: range) != nil
+                guard let swiftRange = Range(NSRange(item.preview.startIndex..., in: item.preview), in: item.preview) else { return false }
+                let nsRange = NSRange(swiftRange, in: item.preview)
+                return regex.firstMatch(in: item.preview, range: nsRange) != nil
             }
         } catch {
             ErrorLogger.shared.logError(.operationFailed(operation: "regex search"), context: "Pattern: \(pattern), Error: \(error.localizedDescription)")
@@ -153,23 +155,30 @@ public class SearchManager {
             
             // インデックスをクリア
             searchIndex.removeAll()
+            indexedItemIDs.removeAll()
             
             // 各アイテムのコンテンツをトークン化してインデックスに追加
             for item in allItems {
-                tokenizer.string = item.preview
-                tokenizer.enumerateTokens(in: item.preview.startIndex..<item.preview.endIndex) { range, _ in
-                    let word = String(item.preview[range]).lowercased()
-                    if word.count > 2 { // 3文字以上の単語のみインデックス化
-                        if searchIndex[word] == nil {
-                            searchIndex[word] = Set<UUID>()
-                        }
-                        searchIndex[word]?.insert(item.id)
-                    }
-                    return true
-                }
+                indexItem(item)
             }
         } catch {
             ErrorLogger.shared.logError(.operationFailed(operation: "build search index"), context: "Error: \(error.localizedDescription)")
+        }
+    }
+
+    /// 単一アイテムをインデックス化
+    private func indexItem(_ item: ClipboardItemModel) {
+        indexedItemIDs.insert(item.id)
+        tokenizer.string = item.preview
+        tokenizer.enumerateTokens(in: item.preview.startIndex..<item.preview.endIndex) { range, _ in
+            let word = String(item.preview[range]).lowercased()
+            if word.count > 2 { // 3文字以上の単語のみインデックス化
+                if searchIndex[word] == nil {
+                    searchIndex[word] = Set<UUID>()
+                }
+                searchIndex[word]?.insert(item.id)
+            }
+            return true
         }
     }
     
@@ -332,7 +341,21 @@ public class SearchManager {
     
     /// インデックスを強制更新（テスト用）
     public func refreshSearchIndex() async {
-        await buildSearchIndex()
+        // 直近アイテムのみ増分インデックス化して高速化
+        do {
+            var descriptor = FetchDescriptor<ClipboardItemModel>(
+                sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+            )
+            descriptor.fetchLimit = 1
+            let latest = try modelContext.fetch(descriptor).first
+            if let item = latest, !indexedItemIDs.contains(item.id) {
+                indexItem(item)
+            }
+        } catch {
+            // フォールバック: フル再構築
+            await buildSearchIndex()
+        }
+
         indexLastUpdated = Date()
         clearCache() // インデックス更新時はキャッシュもクリア
     }
