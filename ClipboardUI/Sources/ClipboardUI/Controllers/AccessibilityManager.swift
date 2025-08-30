@@ -3,12 +3,26 @@ import Observation
 
 // MARK: - Accessibility Types and Protocols
 
-public enum AccessibilityElement {
+public enum AccessibilityElement: Equatable {
     case clipboardItem
     case searchField
     case settingsButton
     case clipboardList
     case actionButton(String)
+    
+    public static func == (lhs: AccessibilityElement, rhs: AccessibilityElement) -> Bool {
+        switch (lhs, rhs) {
+        case (.clipboardItem, .clipboardItem),
+             (.searchField, .searchField),
+             (.settingsButton, .settingsButton),
+             (.clipboardList, .clipboardList):
+            return true
+        case let (.actionButton(lhsString), .actionButton(rhsString)):
+            return lhsString == rhsString
+        default:
+            return false
+        }
+    }
 }
 
 public enum AccessibilityNotificationType {

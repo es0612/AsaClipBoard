@@ -1,0 +1,163 @@
+# SwiftLint configuration for AsaClipBoard
+# Kiro-style code quality standards
+
+# Included file patterns
+included:
+  - AsaClipBoard/
+  - ClipboardCore/Sources/
+  - ClipboardSecurity/Sources/
+  - ClipboardUI/Sources/
+  - IntegrationTests/Sources/
+
+# Excluded patterns
+excluded:
+  - .build/
+  - .git/
+  - .github/
+  - Carthage/
+  - Pods/
+  - "*/Tests/*"
+  - "**/.build/"
+  - "**/DerivedData/"
+
+# Disabled rules (customize as needed)
+disabled_rules:
+  - trailing_whitespace # Allow trailing whitespace in multiline strings
+  - todo # Allow TODO comments during development
+  - line_length # Handle separately with custom config
+
+# Opt-in rules (additional quality checks)
+opt_in_rules:
+  - array_init
+  - attributes
+  - closure_end_indentation
+  - closure_spacing
+  - collection_alignment
+  - contains_over_first_not_nil
+  - empty_count
+  - empty_string
+  - enum_case_associated_values_count
+  - explicit_init
+  - extension_access_modifier
+  - fatal_error_message
+  - file_header
+  - first_where
+  - force_unwrapping
+  - function_default_parameter_at_end
+  - identical_operands
+  - implicit_return
+  - joined_default_parameter
+  - last_where
+  - legacy_random
+  - literal_expression_end_indentation
+  - lower_acl_than_parent
+  - modifier_order
+  - nimble_operator
+  - nslocalizedstring_key
+  - number_separator
+  - object_literal
+  - operator_usage_whitespace
+  - overridden_super_call
+  - override_in_extension
+  - pattern_matching_keywords
+  - prefer_self_type_over_type_of_self
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - strict_fileprivate
+  - switch_case_on_newline
+  - toggle_bool
+  - trailing_closure
+  - unneeded_parentheses_in_closure_argument
+  - vertical_parameter_alignment_on_call
+  - vertical_whitespace_closing_braces
+  - vertical_whitespace_opening_braces
+  - yoda_condition
+
+# Custom rule configurations
+line_length:
+  warning: 120
+  error: 200
+  ignores_urls: true
+  ignores_function_declarations: true
+  ignores_comments: true
+
+file_length:
+  warning: 400
+  error: 1000
+
+function_body_length:
+  warning: 60
+  error: 100
+
+function_parameter_count:
+  warning: 5
+  error: 8
+
+type_body_length:
+  warning: 200
+  error: 350
+
+type_name:
+  min_length: 3
+  max_length: 40
+  excluded:
+    - T
+    - U
+    - V
+
+identifier_name:
+  min_length: 2
+  max_length: 60
+  excluded:
+    - id
+    - x
+    - y
+    - z
+
+# Severity levels
+cyclomatic_complexity:
+  warning: 10
+  error: 20
+
+nesting:
+  type_level:
+    warning: 3
+  function_level:
+    warning: 5
+
+# File header template (customize for your project)
+file_header:
+  required_pattern: |
+                    \/\/
+                    \/\/ .*\.swift
+                    \/\/ AsaClipBoard
+                    \/\/
+                    \/\/ Created by .* on \d{4}\/\d{2}\/\d{2}\.
+                    \/\/
+
+# Custom rules
+custom_rules:
+  # Ensure proper spacing around operators
+  operator_spacing:
+    name: "Operator Spacing"
+    regex: '([^<>=!+\-*/&|^%~]+)([<>=!+\-*/&|^%~]{1,2})([^<>=!+\-*/&|^%~]+)'
+    message: "Operators should be surrounded by spaces"
+    severity: warning
+
+  # Prevent force unwrapping in production code
+  no_force_unwrap:
+    name: "No Force Unwrap"
+    regex: '\!\s*$'
+    message: "Avoid force unwrapping. Consider using optional binding or nil coalescing"
+    severity: warning
+    excluded: ".*Test.*\\.swift$"
+
+  # Ensure proper import organization
+  import_order:
+    name: "Import Order"
+    regex: '^import\s+(?!Foundation|UIKit|SwiftUI|Combine)[A-Za-z]'
+    message: "System frameworks should be imported first"
+    severity: warning
+
+# Reporter type
+reporter: "xcode"

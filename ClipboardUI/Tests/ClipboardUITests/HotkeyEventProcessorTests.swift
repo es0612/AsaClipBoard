@@ -10,8 +10,10 @@ struct HotkeyEventProcessorTests {
     @MainActor func hotkeyEventProcessorInitialization() {
         let processor = HotkeyEventProcessor()
         
-        #expect(processor.hotkeyManager != nil, "HotkeyManagerが初期化されている")
-        #expect(processor.windowController != nil, "ClipboardWindowControllerが初期化されている")
+        // HotkeyManagerとClipboardWindowControllerが正常に初期化されることを確認
+        // （非オプショナル型のためnilチェックではなく、機能的なプロパティで確認）
+        #expect(processor.hotkeyManager.isHotkeyRegistered == false, "HotkeyManagerが初期化され、初期状態ではホットキー未登録")
+        #expect(processor.windowController.isWindowVisible == false, "ClipboardWindowControllerが初期化され、初期状態では非表示")
         #expect(processor.isEnabled == false, "初期状態では無効")
     }
     

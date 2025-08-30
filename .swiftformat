@@ -1,0 +1,55 @@
+# SwiftFormat configuration for AsaClipBoard
+# Kiro-style code formatting standards
+
+# Format options
+--indent 4
+--indentcase false
+--trimwhitespace always
+--commas always
+--semicolons never
+--ranges spaced
+--empty void
+--ifdef no-indent
+--stripunusedargs always
+--self remove
+--importgrouping alphabetized
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--closingparen balanced
+--funcattributes prev-line
+--typeattributes prev-line
+--varattributes same-line
+--nospaceoperators ..<,...
+--operatorfunc spaced
+--symlinks ignore
+--extensionacl on-extension
+
+# Rules to enable
+--enable isEmpty
+--enable sortedImports
+--enable duplicateImports
+--enable unusedArguments
+--enable redundantSelf
+--enable redundantType
+--enable redundantPattern
+--enable redundantGet
+--enable redundantParens
+--enable redundantVoidReturnType
+--enable redundantNilInit
+--enable redundantLet
+--enable redundantReturn
+
+# Rules to disable (if needed)
+--disable trailingCommas
+--disable wrapMultilineStatementBraces
+
+# File options
+--exclude .build
+--exclude .git
+--exclude Carthage
+--exclude Pods
+--exclude DerivedData
+
+# Swift version
+--swiftversion 5.9

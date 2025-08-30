@@ -9,22 +9,22 @@ struct ContentTypeIconTests {
     @Test("各コンテンツタイプに対するアイコン表示")
     func contentTypeIconDisplay() async throws {
         // Given
-        let textIcon = ContentTypeIcon(type: .text)
-        let imageIcon = ContentTypeIcon(type: .image)
-        let urlIcon = ContentTypeIcon(type: .url)
+        let textIcon = await ContentTypeIcon(type: .text)
+        let imageIcon = await ContentTypeIcon(type: .image)
+        let urlIcon = await ContentTypeIcon(type: .url)
         
         // When & Then
-        #expect(textIcon.type == .text)
-        #expect(imageIcon.type == .image)
-        #expect(urlIcon.type == .url)
+        #expect(await textIcon.type == .text)
+        #expect(await imageIcon.type == .image)
+        #expect(await urlIcon.type == .url)
     }
     
     @Test("アイコンサイズの設定")
     func iconSizeConfiguration() async throws {
         // Given
-        let icon = ContentTypeIcon(type: .text, size: 24)
+        let icon = await ContentTypeIcon(type: .text, size: 24)
         
         // When & Then
-        #expect(icon.size == 24)
+        #expect(await icon.size == 24)
     }
 }

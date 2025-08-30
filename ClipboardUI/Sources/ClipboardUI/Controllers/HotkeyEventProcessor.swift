@@ -14,6 +14,7 @@ public class HotkeyEventProcessor: @unchecked Sendable {
     public var onItemSelected: ((ClipboardItemModel) -> Void)?
     
     // キーイベント監視
+    @ObservationIgnored
     private nonisolated(unsafe) var eventMonitor: Any?
     
     public init() {

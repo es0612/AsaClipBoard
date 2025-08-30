@@ -12,10 +12,10 @@ struct FilterBarTests {
         @State var selectedFilter: ContentFilter = .all
         
         // When
-        let filterBar = FilterBar(selectedFilter: $selectedFilter)
+        let _ = await FilterBar(selectedFilter: $selectedFilter)
         
         // Then
-        #expect(filterBar != nil)
+        // FilterBar が正常に初期化されることを確認（非オプショナル型のため、nil チェックは削除）
     }
     
     @Test("FilterBarのフィルター選択状態")
@@ -24,10 +24,10 @@ struct FilterBarTests {
         @State var selectedFilter: ContentFilter = .text
         
         // When
-        let filterBar = FilterBar(selectedFilter: $selectedFilter)
+        let _ = await FilterBar(selectedFilter: $selectedFilter)
         
         // Then
-        #expect(filterBar != nil)
+        // FilterBarが正常に初期化されることを確認
         #expect(selectedFilter == .text)
     }
     
@@ -38,10 +38,10 @@ struct FilterBarTests {
         let allFilters = ContentFilter.allCases
         
         // When
-        let filterBar = FilterBar(selectedFilter: $selectedFilter)
+        let _ = await FilterBar(selectedFilter: $selectedFilter)
         
         // Then
-        #expect(filterBar != nil)
+        // FilterBarが正常に初期化されることを確認
         #expect(allFilters.count == 5)
         #expect(allFilters.contains(.all))
         #expect(allFilters.contains(.text))
@@ -57,10 +57,10 @@ struct FilterBarTests {
         let customFilters: [ContentFilter] = [.all, .text, .url]
         
         // When
-        let filterBar = FilterBar(selectedFilter: $selectedFilter, filters: customFilters)
+        let _ = await FilterBar(selectedFilter: $selectedFilter, filters: customFilters)
         
         // Then
-        #expect(filterBar != nil)
+        // FilterBarが正常に初期化されることを確認
         #expect(customFilters.count == 3)
     }
     
@@ -71,12 +71,12 @@ struct FilterBarTests {
         var callbackFilter: ContentFilter = .all
         
         // When
-        let filterBar = FilterBar(selectedFilter: $selectedFilter) { filter in
+        let _ = await FilterBar(selectedFilter: $selectedFilter) { filter in
             callbackFilter = filter
         }
         
         // Then
-        #expect(filterBar != nil)
+        // FilterBarが正常に初期化されることを確認
         #expect(callbackFilter == .all)
     }
     
@@ -86,10 +86,10 @@ struct FilterBarTests {
         @State var selectedFilter: ContentFilter = .text
         
         // When
-        let filterBar = FilterBar(selectedFilter: $selectedFilter)
+        let _ = await FilterBar(selectedFilter: $selectedFilter)
         
         // Then
-        #expect(filterBar != nil)
+        // FilterBarが正常に初期化されることを確認
         #expect(selectedFilter == .text)
     }
 }
