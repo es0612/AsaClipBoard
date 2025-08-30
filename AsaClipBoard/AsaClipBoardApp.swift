@@ -14,6 +14,7 @@ struct AsaClipBoardApp: App {
     let securityManager: SecurityManager
     let menuBarExtraManager: MenuBarExtraManager
     let notificationManager: NotificationManager
+    let clipboardWindowController: ClipboardWindowController
     
     init() {
         // マネージャークラスの初期化
@@ -22,6 +23,7 @@ struct AsaClipBoardApp: App {
         self.clipboardManager = ClipboardManager()
         self.menuBarExtraManager = MenuBarExtraManager()
         self.notificationManager = NotificationManager()
+        self.clipboardWindowController = ClipboardWindowController()
         
         // パッケージの初期化
         ClipboardSecurity.initialize()
@@ -36,6 +38,9 @@ struct AsaClipBoardApp: App {
         
         // ClipboardManagerに通知マネージャーを設定
         clipboardManager.setNotificationManager(notificationManager)
+        
+        // ClipboardWindowControllerの設定
+        setupClipboardWindowController()
     }
     
     var body: some Scene {
@@ -62,9 +67,9 @@ struct AsaClipBoardApp: App {
     private func setupMenuBarExtraCallbacks() {
         // ウィンドウ表示のコールバック
         menuBarExtraManager.onShowWindow = {
-            // 完全なクリップボード履歴ウィンドウを表示
-            // TODO: 実装予定
-            print("Show full clipboard history window")
+            Task {
+                await self.showFullClipboardWindow()
+            }
         }
         
         // アイテム選択のコールバック
@@ -73,6 +78,28 @@ struct AsaClipBoardApp: App {
                 await clipboardManager?.copyToClipboard(item)
             }
         }
+    }
+    
+    @MainActor
+    private func setupClipboardWindowController() {
+        // ClipboardWindowControllerにアイテムを設定
+        clipboardWindowController.clipboardItems = clipboardManager.recentItems
+        
+        // アイテム選択時のコールバック設定
+        clipboardWindowController.onItemSelected = { item in
+            Task {
+                await self.clipboardManager.copyToClipboard(item)
+            }
+        }
+    }
+    
+    @MainActor
+    private func showFullClipboardWindow() async {
+        // 最新のクリップボードアイテムを取得して設定
+        clipboardWindowController.clipboardItems = clipboardManager.recentItems
+        
+        // ウィンドウを表示
+        await clipboardWindowController.showClipboardWindow()
     }
 }
 

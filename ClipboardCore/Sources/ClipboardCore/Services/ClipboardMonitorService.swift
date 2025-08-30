@@ -61,7 +61,7 @@ public class ClipboardMonitorService {
             descriptor.fetchLimit = maxHistorySize
             clipboardItems = try modelContext.fetch(descriptor)
         } catch {
-            print("Error loading existing clipboard items: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "load existing clipboard items"), context: "Error: \(error.localizedDescription)")
             clipboardItems = []
         }
     }
@@ -97,7 +97,7 @@ public class ClipboardMonitorService {
         do {
             try modelContext.save()
         } catch {
-            print("Error saving clipboard item: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "save clipboard item"), context: "Error: \(error.localizedDescription)")
         }
     }
     #endif
@@ -146,7 +146,7 @@ public class ClipboardMonitorService {
         do {
             try modelContext.save()
         } catch {
-            print("Error saving clipboard item: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "save clipboard item (test mode)"), context: "Error: \(error.localizedDescription)")
         }
     }
 

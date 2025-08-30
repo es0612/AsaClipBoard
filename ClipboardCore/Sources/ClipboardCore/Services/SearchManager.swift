@@ -90,7 +90,7 @@ public class SearchManager {
                 return regex.firstMatch(in: item.preview, range: range) != nil
             }
         } catch {
-            print("Regex search failed: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "regex search"), context: "Pattern: \(pattern), Error: \(error.localizedDescription)")
             return []
         }
     }
@@ -106,7 +106,7 @@ public class SearchManager {
             // SwiftDataのpredicateでEnum比較がサポートされていないため、フィルタリングで対応
             return allItems.filter { $0.contentType == contentType }
         } catch {
-            print("Content type search failed: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "content type search"), context: "ContentType: \(contentType), Error: \(error.localizedDescription)")
             return []
         }
     }
@@ -125,7 +125,7 @@ public class SearchManager {
         do {
             return try modelContext.fetch(descriptor)
         } catch {
-            print("Date range search failed: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "date range search"), context: "DateRange: \(startDate) - \(endDate), Error: \(error.localizedDescription)")
             return []
         }
     }
@@ -169,7 +169,7 @@ public class SearchManager {
                 }
             }
         } catch {
-            print("Failed to build search index: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "build search index"), context: "Error: \(error.localizedDescription)")
         }
     }
     
@@ -183,7 +183,7 @@ public class SearchManager {
         do {
             return try modelContext.fetch(descriptor)
         } catch {
-            print("Failed to fetch recent items: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "fetch recent items"), context: "Error: \(error.localizedDescription)")
             return []
         }
     }
@@ -202,7 +202,7 @@ public class SearchManager {
         do {
             return try modelContext.fetch(descriptor)
         } catch {
-            print("Exact search failed: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "exact search"), context: "Query: \(query), Error: \(error.localizedDescription)")
             return []
         }
     }
@@ -240,7 +240,7 @@ public class SearchManager {
             
             return allItems.filter { matchingIds.contains($0.id) }
         } catch {
-            print("Index search failed: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "index search"), context: "Query: \(query), Error: \(error.localizedDescription)")
             return []
         }
     }
@@ -268,7 +268,7 @@ public class SearchManager {
             
             return scoredItems.map { $0.0 }
         } catch {
-            print("Fuzzy search failed: \(error)")
+            ErrorLogger.shared.logError(.operationFailed(operation: "fuzzy search"), context: "Query: \(query), Error: \(error.localizedDescription)")
             return []
         }
     }
